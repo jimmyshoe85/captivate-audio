@@ -1,0 +1,16 @@
+{
+    "name": "captivate-tts-api",
+    "version": "1.0.0",
+    "description": "TTS API for Captivate",
+    "main": "index.js",
+    "scripts": {
+      "start": "vercel dev",
+      "deploy": "vercel deploy --prod"
+    },
+    "dependencies": {
+      "openai": "^4.20.1"
+    },
+    "engines": {
+      "node": ">=14.0.0"
+    }
+  }
