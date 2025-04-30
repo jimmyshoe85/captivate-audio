@@ -1,8 +1,7 @@
 // /api/tts.js
-<<<<<<< HEAD
 import { OpenAI } from "openai";
 
-/* 1.  Character → voice map  ─────────────────────────── */
+/* Character → voice map */
 const VOICES = {
   angela:   { voice: "sage",  instructions: "Neutral American, warm mentor." },
   brittany: { voice: "alloy", instructions: "Upbeat Gen-Z, energetic tone." },
@@ -11,83 +10,69 @@ const VOICES = {
   miles:    { voice: "ash",   instructions: "Queens NY, relaxed confidence." }
 };
 
+// Remove edge runtime configuration as it may be causing issues
+// export const config = { runtime: "edge" };
+
 export default async function handler(req, res) {
-  /* ───────────  Unchanged CORS boilerplate  ─────────── */
+  /* CORS headers (required for Captivate) */
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "POST, OPTIONS"
-  );
-=======
-// this is the newest.
-import { OpenAI }   from "openai";
-import { VOICES }   from "@/lib/voices";
-
-export const config = { runtime: "edge" };
-
-export default async function handler(req, res) {
-  /* ─── CORS (Captivate needs it) ─────────────────────────────── */
-  res.setHeader("Access-Control-Allow-Origin",  "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
->>>>>>> 8480ccb4e4737ff7003896c1bc9c9ba7aa50e44c
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST")
+  
+  // Handle preflight OPTIONS request
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  
+  // Only allow POST requests
+  if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
-<<<<<<< HEAD
-    /* 2.  Read text  +  character from body  ─────────── */
+    // Get text and character from the request body
     const { text, char = "angela" } = req.body || {};
-    if (!text) return res.status(400).json({ error: "Text is required" });
+    
+    if (!text) {
+      return res.status(400).json({ error: "Text is required" });
+    }
+    
+    console.log('Received text:', text, 'Character:', char);
 
-    /* 3.  Resolve voice & instructions  ──────────────── */
+    // Resolve voice configuration
     const cfg = VOICES[char.toLowerCase()] || VOICES.angela;
 
-    /* 4.  OpenAI call (same buffer logic)  ───────────── */
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
+    // Initialize OpenAI with API key from environment variable
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    
+    console.log('Calling OpenAI TTS API with voice:', cfg.voice);
+    
+    // Call OpenAI TTS API - using cfg.voice to match original working code
     const mp3Response = await openai.audio.speech.create({
       model: "gpt-4o-mini-tts",
       voice: cfg.voice,
       input: text,
       instructions: cfg.instructions
     });
+    
+    console.log('OpenAI TTS API call successful');
 
+    // Convert the response to a Buffer
     const buffer = Buffer.from(await mp3Response.arrayBuffer());
-
-    res.setHeader("Content-Type", "audio/mpeg");
+    console.log('Buffer created, size:', buffer.length);
+    
+    // Set the content type to audio/mpeg
+    res.setHeader('Content-Type', 'audio/mpeg');
+    // Send the audio data
     res.send(buffer);
+    console.log('Response sent successfully');
   } catch (error) {
-    console.error("Error generating speech:", error);
-    return res.status(500).json({ error: error.message });
-=======
-    /* ─── 1. get body ─────────────────────────────────────────── */
-    const { char = "angela", text } = req.body || {};
-    if (!text) return res.status(400).json({ error: "Field 'text' required." });
-
-    /* ─── 2. resolve voice ───────────────────────────────────── */
-    const cfg = VOICES[char.toLowerCase()] || VOICES.angela;
-
-    /* ─── 3. OpenAI TTS call ─────────────────────────────────── */
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const speech = await openai.audio.speech.create({
-      model:        cfg.model,
-      voice:        cfg.name,
-      input:        text,
-      instructions: cfg.instructions
+    console.error('Error generating speech:', error);
+    return res.status(500).json({ 
+      error: 'Error generating speech',
+      message: error.message
     });
-
-    /* ─── 4. stream MP3 back to Captivate ────────────────────── */
-    const buf = Buffer.from(await speech.arrayBuffer());
-    res.setHeader("Content-Type", "audio/mpeg");
-    res.send(buf);                                   // <— raw binary
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      error:   "TTS generation failed",
-      message: err.message
-    });
->>>>>>> 8480ccb4e4737ff7003896c1bc9c9ba7aa50e44c
   }
 }
