@@ -1,4 +1,4 @@
-// Wine Game - Slide Entry Code
+// Wine Game - Slide Entry Code (Fixed for your Vercel setup)
 // Load character scenario and populate Captivate variables
 
 (function() {
@@ -13,7 +13,7 @@
       currentRoom = window.cpAPIInterface.getVariableValue("currentRoom") || "water";
       isRemedial = window.cpAPIInterface.getVariableValue("isRemedial") === "true";
     } catch (e) {
-      console.error("Error getting Captivate variables:", e);
+      alert("Error getting Captivate variables: " + e.message);
       // Default fallback
       currentCharacter = "brittany";
       currentRoom = "water";
@@ -26,10 +26,10 @@
     isRemedial = false;
   }
   
-  // Your Vercel API endpoint for character data
-  const apiUrl = `https://captivate-audio.vercel.app/api/${currentCharacter}_${currentRoom}.json`;
+  // FIXED: Call your existing Vercel endpoint (no .json extension)
+  const apiUrl = `https://captivate-audio.vercel.app/api/${currentCharacter}_${currentRoom}`;
   
-  console.log(`Loading scenario for ${currentCharacter} in ${currentRoom} room, remedial: ${isRemedial}`);
+  alert(`Loading scenario for ${currentCharacter} in ${currentRoom} room, remedial: ${isRemedial}`);
   
   // Load character data
   fetch(apiUrl)
@@ -40,10 +40,33 @@
       return response.json();
     })
     .then(data => {
-      console.log("Character data loaded:", data);
+      alert("Character data loaded successfully");
+      
+      // Debug: Show the actual data structure
+      alert("Data keys: " + Object.keys(data).join(", "));
+      
+      // Your JSON structure - try both ways to access the data
+      let characterData;
+      const characterKey = `${currentCharacter}_${currentRoom}`;
+      
+      if (data[characterKey]) {
+        characterData = data[characterKey];
+        alert("Found data using key: " + characterKey);
+      } else if (data.brittany_water) {
+        characterData = data.brittany_water;
+        alert("Found data using direct key: brittany_water");
+      } else {
+        // Maybe the data is at the root level
+        characterData = data;
+        alert("Using root level data");
+      }
+      
+      if (!characterData || !characterData.character) {
+        throw new Error(`Character data structure invalid. Keys found: ${Object.keys(data).join(", ")}`);
+      }
       
       // Choose scenario set based on remedial status
-      const scenarios = isRemedial ? data.remedial : data.firstTime;
+      const scenarios = isRemedial ? characterData.remedial : characterData.firstTime;
       
       if (!scenarios || scenarios.length === 0) {
         throw new Error(`No scenarios found for ${isRemedial ? 'remedial' : 'first time'}`);
@@ -53,14 +76,14 @@
       const randomIndex = Math.floor(Math.random() * scenarios.length);
       const selectedScenario = scenarios[randomIndex];
       
-      console.log("Selected scenario:", selectedScenario.id);
+      alert(`Selected scenario: ${selectedScenario.id}`);
       
       // Populate Captivate variables
       if (typeof window.cpAPIInterface !== 'undefined') {
         // Character info
-        window.cpAPIInterface.setVariableValue("characterName", data.character.name);
-        window.cpAPIInterface.setVariableValue("characterVoice", data.character.voice);
-        window.cpAPIInterface.setVariableValue("characterImage", data.character.image);
+        window.cpAPIInterface.setVariableValue("characterName", characterData.character.name);
+        window.cpAPIInterface.setVariableValue("characterVoice", characterData.character.voice);
+        window.cpAPIInterface.setVariableValue("characterImage", characterData.character.image);
         
         // Scenario content
         window.cpAPIInterface.setVariableValue("scenarioText", selectedScenario.scenario);
@@ -77,16 +100,15 @@
         // Set loading status
         window.cpAPIInterface.setVariableValue("scenarioLoaded", "true");
         
-        console.log("All Captivate variables populated successfully");
+        alert("All Captivate variables populated successfully");
+        alert(`Scenario: ${selectedScenario.scenario.substring(0, 50)}...`);
       } else {
-        console.log("Captivate API not available - running in preview mode");
-        console.log("Scenario text:", selectedScenario.scenario);
-        console.log("Options:", selectedScenario.option1Wine.wine, selectedScenario.option2Wine.wine, selectedScenario.option3Wine.wine);
+        alert("Captivate API not available - running in preview mode");
       }
       
     })
     .catch(error => {
-      console.error('Error loading character scenario:', error);
+      alert('Error loading character scenario: ' + error.message);
       
       // Set error state in Captivate
       if (typeof window.cpAPIInterface !== 'undefined') {
