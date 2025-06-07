@@ -1,0 +1,108 @@
+{
+  "brittany_juice.json": {
+    "character": {
+      "name": "Brittany",
+      "voice": "alloy",
+      "image": "brittany_genz.jpg"
+    },
+    "firstTime": [
+      {
+        "id": "brittany_j1",
+        "scenario": "OMG, I'm having this amazing tuna poke bowl with avocado, edamame, and spicy mayo! It's like, so fresh and Instagram-perfect!",
+        "option1Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 5,
+          "feedbackText": "Perfect! You nailed the fresh, clean pairing!"
+        },
+        "option2Wine": {
+          "wine": "Riesling",
+          "points": 3,
+          "feedbackText": "Good choice! But Sauvignon Blanc would be even better."
+        },
+        "option3Wine": {
+          "wine": "Merlot",
+          "points": 1,
+          "feedbackText": "Not quite! Red wine would overwhelm the delicate tuna."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      },
+      {
+        "id": "brittany_j2",
+        "scenario": "I'm obsessed with this burrata and peach salad with arugula and balsamic glaze! Sweet, creamy, peppery—it's like flavor goals!",
+        "option1Wine": {
+          "wine": "Rosé",
+          "points": 5,
+          "feedbackText": "Totally! Rosé's fresh fruitiness complements the peaches perfectly!"
+        },
+        "option2Wine": {
+          "wine": "Chardonnay",
+          "points": 3,
+          "feedbackText": "Good with the burrata, but might be too heavy for the peaches."
+        },
+        "option3Wine": {
+          "wine": "Cabernet Sauvignon",
+          "points": 1,
+          "feedbackText": "Way too intense! This delicate salad needs something lighter."
+        },
+        "correctWineType": "rosé",
+        "maxPoints": 5
+      },
+      {
+        "id": "brittany_j3",
+        "scenario": "I'm totally loving this Korean BBQ beef with kimchi and jasmine rice! It's spicy, funky, and so addictive!",
+        "option1Wine": {
+          "wine": "Syrah",
+          "points": 5,
+          "feedbackText": "Yes! Syrah's bold character stands up to the Korean BBQ perfectly!"
+        },
+        "option2Wine": {
+          "wine": "Pinot Noir",
+          "points": 3,
+          "feedbackText": "Decent with the beef, but might lack intensity for the kimchi."
+        },
+        "option3Wine": {
+          "wine": "Riesling",
+          "points": 1,
+          "feedbackText": "Too delicate! This bold, spicy dish needs a stronger wine."
+        },
+        "correctWineType": "red",
+        "maxPoints": 5
+      }
+    ],
+    "remedial": [
+      {
+        "id": "brittany_jr1",
+        "scenario": "I'm having this cute little salmon tartare with cucumber and citrus! So fresh and aesthetic!",
+        "option1Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 5,
+          "feedbackText": "Perfect! Crisp and fresh, just like the tartare!"
+        },
+        "option2Wine": {
+          "wine": "Merlot",
+          "points": 1,
+          "feedbackText": "No way! Red wine would totally clash with the delicate salmon."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      },
+      {
+        "id": "brittany_jr2",
+        "scenario": "I'm obsessed with this truffle pasta carbonara! It's like, so rich and luxurious!",
+        "option1Wine": {
+          "wine": "Chardonnay",
+          "points": 5,
+          "feedbackText": "Amazing choice! Rich wine for a rich dish!"
+        },
+        "option2Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 1,
+          "feedbackText": "Too light! This rich carbonara needs a fuller wine."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      }
+    ]
+  }
+}

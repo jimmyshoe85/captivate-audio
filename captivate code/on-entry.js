@@ -3,8 +3,8 @@
 
 (function() {
   // Get current character and room from Captivate variables
-  let currentCharacter = "";
-  let currentRoom = "";
+  let currentCharacter = "brittany";
+  let currentRoom = "water";
   let isRemedial = false;
   
   if (typeof window.cpAPIInterface !== 'undefined') {
@@ -27,7 +27,7 @@
   }
   
   // Your Vercel API endpoint for character data
-  const apiUrl = `https://your-wine-game.vercel.app/api/${currentCharacter}_${currentRoom}.json`;
+  const apiUrl = `https://captivate-audio.vercel.app/api/${currentCharacter}_${currentRoom}.json`;
   
   console.log(`Loading scenario for ${currentCharacter} in ${currentRoom} room, remedial: ${isRemedial}`);
   
