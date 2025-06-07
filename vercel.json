@@ -1,8 +1,8 @@
-
 {
   "version": 2,
   "routes": [
     { "src": "/api/tts", "dest": "/api/tts.js" },
-    { "src": "/api/([^/]+)\\.json", "dest": "/api/$1.js" }
+    { "src": "/api/brittany_water", "dest": "/api/brittany_water.js" },
+    { "src": "/api/miles_water", "dest": "/api/miles_water.js" }
   ]
 }
