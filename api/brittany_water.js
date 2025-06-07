@@ -1,3 +1,4 @@
+// /api/brittany_water.js
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,8 +16,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Import the JSON data
-    const characterData = await import('../data/brittany_water.json');
+    // Import the JSON data with the correct import attribute
+    const characterData = await import('../data/brittany_water.json', {
+      assert: { type: 'json' }
+    });
     
     // Return the character data
     res.status(200).json(characterData.default || characterData);
