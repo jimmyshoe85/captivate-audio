@@ -30,3 +30,18 @@ Push to GitHub:
 
 bashCopygit push -u origin main
 The error "src refspec main does not match any" typically means you don't have a main branch or you haven't committed any changes yet. Following these steps should resolve the issue.RetryClaude can make mistakes. Please double-check responses.
+
+
+angela:   { voice: "sage",  instructions: "Neutral American, warm mentor." },
+  brittany: { voice: "alloy", instructions: "Upbeat Gen-Z, energetic tone." },
+  jose:     { voice: "verse", instructions: "Light Spanish accent, warm." },
+  kevin:    { voice: "echo",  instructions: "Mid-western trainer, steady." },
+  miles:    { voice: "ash",   instructions: "Queens NY, relaxed confidence." }
+
+# JSON STRUCTURE
+  json structure
+  brittany_juice.json
+jose_juice.json
+angela_juice.json
+kevin_juice.json
+miles_juice.json
