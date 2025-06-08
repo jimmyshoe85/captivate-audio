@@ -7,7 +7,9 @@ const VOICES = {
   brittany: { voice: "alloy", instructions: "Upbeat Gen-Z, energetic tone." },
   jose:     { voice: "verse", instructions: "Light Spanish accent, warm." },
   kevin:    { voice: "echo",  instructions: "Mid-western trainer, steady." },
-  miles:    { voice: "ash",   instructions: "Queens NY, relaxed confidence." }
+  miles:    { voice: "ash",   instructions: "Queens NY, relaxed confidence." },
+  clara:    { voice: "nova",  instructions: "Sophisticated British accent, theatrical delivery, precise articulation. Think Miranda Priestly - commanding but refined." }
+
 };
 
 // Remove edge runtime configuration as it may be causing issues
