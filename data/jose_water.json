@@ -1,0 +1,108 @@
+{
+  "jose_water.json": {
+    "character": {
+      "name": "Jose",
+      "voice": "verse",
+      "image": "jose_spanish.jpg"
+    },
+    "firstTime": [
+      {
+        "id": "jose_w1",
+        "scenario": "Amigo, I need your help! I ordered the grilled sea bass with olive oil and herbs - reminds me of home, you know? But what wine should I choose to honor this beautiful fish?",
+        "option1Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 5,
+          "feedbackText": "¡Perfecto! You understand that sea bass needs a wine with bright acidity. Sauvignon Blanc's herbaceous character echoes the herbs while its crispness complements the olive oil beautifully."
+        },
+        "option2Wine": {
+          "wine": "Pinot Noir",
+          "points": 2,
+          "feedbackText": "I appreciate the thought, but sea bass is too delicate for red wine. The tannins would overpower the fish's subtle flavor. Stay with whites for delicate seafood, my friend."
+        },
+        "option3Wine": {
+          "wine": "Cabernet Sauvignon",
+          "points": 1,
+          "feedbackText": "¡No, no! Cabernet is far too bold for sea bass. This beautiful fish needs a wine that enhances its delicate nature, not one that dominates it."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      },
+      {
+        "id": "jose_w2",
+        "scenario": "I'm feeling nostalgic and ordered the braised lamb shanks with rosemary - just like my abuela used to make. But I'm confused about the wine. Can you guide me, por favor?",
+        "option1Wine": {
+          "wine": "Riesling",
+          "points": 1,
+          "feedbackText": "Too gentle for such a robust dish! Lamb shanks are rich and hearty - they need a wine with body and tannins to match that intensity. Riesling would be lost completely."
+        },
+        "option2Wine": {
+          "wine": "Merlot",
+          "points": 5,
+          "feedbackText": "¡Excelente! Merlot's plush texture and moderate tannins are perfect for braised lamb. The wine's richness complements the meat while its structure cuts through the richness."
+        },
+        "option3Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 1,
+          "feedbackText": "My friend, this won't work! Lamb shanks are too rich and savory for white wine. You need red wine's tannins and body to balance such a hearty dish."
+        },
+        "correctWineType": "red",
+        "maxPoints": 5
+      },
+      {
+        "id": "jose_w3",
+        "scenario": "I'm trying something new - roasted chicken with lemon and garlic, simple but elegant. I want to choose the right wine to make it special. What do you think would work best?",
+        "option1Wine": {
+          "wine": "Cabernet Sauvignon",
+          "points": 2,
+          "feedbackText": "Too powerful! While chicken can handle some reds, Cabernet's boldness would overpower the lemon and garlic. This dish needs something more balanced."
+        },
+        "option2Wine": {
+          "wine": "Chardonnay",
+          "points": 5,
+          "feedbackText": "¡Muy bien! Chardonnay has the body to complement roasted chicken while its acidity enhances the lemon. The wine's richness balances beautifully with garlic."
+        },
+        "option3Wine": {
+          "wine": "Riesling",
+          "points": 3,
+          "feedbackText": "Good instinct with white wine, but Riesling might be too delicate. Roasted chicken with garlic needs a wine with more body and structure."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      }
+    ],
+    "remedial": [
+      {
+        "id": "jose_wr1",
+        "scenario": "Let me try again! I have grilled shrimp with garlic and herbs - very simple preparation. I want to get this pairing right this time. Help me choose wisely?",
+        "option1Wine": {
+          "wine": "Merlot",
+          "points": 1,
+          "feedbackText": "Remember our lesson, amigo! Delicate seafood like shrimp needs delicate wine. Red wines' tannins can make shellfish taste metallic."
+        },
+        "option2Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 5,
+          "feedbackText": "¡Perfecto! Now you're learning! Sauvignon Blanc's acidity and herbaceous notes are perfect for shrimp with herbs. Light seafood, light wine!"
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      },
+      {
+        "id": "jose_wr2",
+        "scenario": "One more chance to show I understand! I ordered beef short ribs braised in red wine. This is a rich, hearty dish. What wine should complement it?",
+        "option1Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 1,
+          "feedbackText": "No, my friend! Remember - rich meat needs rich wine. White wine cannot stand up to the intensity of braised short ribs."
+        },
+        "option2Wine": {
+          "wine": "Cabernet Sauvignon",
+          "points": 5,
+          "feedbackText": "¡Excelente! You understand now! Bold meat dishes need bold wines. Cabernet's tannins and body are perfect for rich, braised beef."
+        },
+        "correctWineType": "red",
+        "maxPoints": 5
+      }
+    ]
+  }
+}

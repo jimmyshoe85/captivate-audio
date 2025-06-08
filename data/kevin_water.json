@@ -1,0 +1,108 @@
+{
+  "kevin_water.json": {
+    "character": {
+      "name": "Kevin",
+      "voice": "echo",
+      "image": "kevin_midwestern.jpg"
+    },
+    "firstTime": [
+      {
+        "id": "kevin_w1",
+        "scenario": "I could use some advice here, friend. Got myself a nice piece of grilled trout with almonds and butter. Pretty straightforward dish, but I want to pick the right wine. What's your recommendation?",
+        "option1Wine": {
+          "wine": "Pinot Noir",
+          "points": 2,
+          "feedbackText": "I see your thinking with a lighter red, but trout is delicate enough that even Pinot Noir might overpower it. Fish this delicate needs white wine's cleaner profile."
+        },
+        "option2Wine": {
+          "wine": "Chardonnay",
+          "points": 5,
+          "feedbackText": "Solid choice! Chardonnay's got the body to handle the almonds and butter while its acidity keeps the pairing bright. Good match for the trout's delicate flavor."
+        },
+        "option3Wine": {
+          "wine": "Cabernet Sauvignon",
+          "points": 1,
+          "feedbackText": "Way too heavy there, buddy. Cabernet would completely steamroll over that trout. When you've got delicate fish, you need a wine that won't compete."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      },
+      {
+        "id": "kevin_w2",
+        "scenario": "I'm looking at this grilled pork chop with apple chutney on my plate. Seems like it could go either way with wine - I'm honestly not sure. Could you point me in the right direction?",
+        "option1Wine": {
+          "wine": "Riesling",
+          "points": 5,
+          "feedbackText": "Smart thinking! Riesling's touch of sweetness plays beautifully with that apple chutney, while its acidity cuts through the pork fat. Good call on matching the fruit flavors."
+        },
+        "option2Wine": {
+          "wine": "Cabernet Sauvignon",
+          "points": 3,
+          "feedbackText": "Not bad with the pork, but Cabernet might be too bold for the apple chutney. The fruit in the dish is calling for something with more finesse."
+        },
+        "option3Wine": {
+          "wine": "Merlot",
+          "points": 2,
+          "feedbackText": "Could work with the pork, but you're missing the apple component. The chutney's sweetness needs a wine that can complement those fruit flavors."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      },
+      {
+        "id": "kevin_w3",
+        "scenario": "Got a hearty beef stew here - potatoes, carrots, rich gravy, the whole nine yards. Comfort food at its finest. What wine would you pair with something this substantial?",
+        "option1Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 1,
+          "feedbackText": "That's not gonna cut it, friend. Beef stew is too rich and hearty for Sauvignon Blanc. You need something with more body and tannins to stand up to all that richness."
+        },
+        "option2Wine": {
+          "wine": "Riesling",
+          "points": 1,
+          "feedbackText": "Too light for the job. Beef stew needs a wine that can match its intensity. Riesling would get completely overwhelmed by all those hearty flavors."
+        },
+        "option3Wine": {
+          "wine": "Merlot",
+          "points": 5,
+          "feedbackText": "Perfect match! Merlot's got the body to complement the beef and the tannins to cut through that rich gravy. Hearty food needs a hearty wine - you nailed it."
+        },
+        "correctWineType": "red",
+        "maxPoints": 5
+      }
+    ],
+    "remedial": [
+      {
+        "id": "kevin_wr1",
+        "scenario": "Let's try this again. I've got pan-seared scallops with a light cream sauce. Simple preparation, but I want to get the wine right this time. What do you think?",
+        "option1Wine": {
+          "wine": "Chardonnay",
+          "points": 5,
+          "feedbackText": "There you go! Chardonnay's richness matches that cream sauce while its acidity balances the scallops' sweetness. You're getting the hang of this!"
+        },
+        "option2Wine": {
+          "wine": "Pinot Noir",
+          "points": 1,
+          "feedbackText": "Remember what we learned - delicate seafood needs delicate wine. Even light red wine can overpower scallops. Stick with whites for shellfish."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      },
+      {
+        "id": "kevin_wr2",
+        "scenario": "One more shot at this. I've got a thick ribeye steak, grilled medium-rare. Classic steakhouse preparation. I want to show I understand how to match wine intensity. Help me out?",
+        "option1Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 1,
+          "feedbackText": "Come on now, you know better! Ribeye is rich and fatty - it needs a wine with tannins and body to cut through all that richness. White wine can't handle this job."
+        },
+        "option2Wine": {
+          "wine": "Cabernet Sauvignon",
+          "points": 5,
+          "feedbackText": "Excellent! You've got it figured out. Bold meat needs bold wine. Cabernet's tannins and full body are exactly what ribeye calls for. Well done!"
+        },
+        "correctWineType": "red",
+        "maxPoints": 5
+      }
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "miles_water": {
+  "miles_water.json": {
     "character": {
       "name": "Miles",
       "voice": "ash",
@@ -8,63 +8,63 @@
     "firstTime": [
       {
         "id": "miles_w1",
-        "scenario": "Yo, I got this beautiful piece of halibut with lemon and capers. Keep it simple, let the fish do the talking, you know what I'm saying?",
+        "scenario": "Yo, I need some help here! Got this beautiful piece of halibut with lemon and capers - keeping it simple, letting the fish do the talking. What wine should I be looking at?",
         "option1Wine": {
-          "wine": "Red Wine",
+          "wine": "Merlot",
           "points": 1,
-          "feedbackText": "Nah, nah... halibut's too delicate for red wine, my friend."
+          "feedbackText": "Nah, nah... halibut's too delicate for red wine, my friend. You need something that won't compete with that clean fish flavor. Think lighter, think brighter."
         },
         "option2Wine": {
-          "wine": "White Wine",
+          "wine": "Sauvignon Blanc",
           "points": 5,
-          "feedbackText": "Yo, that's what I'm talking about! You let the fish shine with the right wine."
+          "feedbackText": "Yo, that's what I'm talking about! Sauvignon Blanc's got that crisp acidity that makes the lemon pop, and it lets the fish shine. That's how you do it right."
         },
         "option3Wine": {
-          "wine": "Rosé Wine",
-          "points": 1,
-          "feedbackText": "Close, but white wine's cleaner profile is what this delicate fish needs."
+          "wine": "Chardonnay",
+          "points": 3,
+          "feedbackText": "Close, but you can go cleaner. Chardonnay might be a little heavy for halibut this simple. The fish is calling for something more refreshing, you feel me?"
         },
         "correctWineType": "white",
         "maxPoints": 5
       },
       {
         "id": "miles_w2",
-        "scenario": "I'm working on some braised short ribs that been cooking all day. Fall-off-the-bone tender, rich as anything.",
+        "scenario": "I'm working on some braised short ribs that been cooking all day. Fall-off-the-bone tender, rich as anything. What wine's gonna stand up to this beast?",
         "option1Wine": {
-          "wine": "Red Wine",
-          "points": 5,
-          "feedbackText": "Now that's what I call understanding! Rich meat needs rich wine."
+          "wine": "Riesling",
+          "points": 1,
+          "feedbackText": "Come on now, that's way too delicate! Short ribs this rich need a wine with some serious backbone. Riesling would get completely lost in all that richness."
         },
         "option2Wine": {
-          "wine": "White Wine",
+          "wine": "Sauvignon Blanc",
           "points": 1,
-          "feedbackText": "Come on now, short ribs that rich need red wine's full body and tannins."
+          "feedbackText": "Not gonna work, boss. White wine can't handle the intensity of braised short ribs. You need red wine's tannins to cut through all that fat and flavor."
         },
         "option3Wine": {
-          "wine": "Rosé Wine",
-          "points": 1,
-          "feedbackText": "Rosé's nice, but this dish needs the power that only red wine can bring."
+          "wine": "Cabernet Sauvignon",
+          "points": 5,
+          "feedbackText": "Now that's what I call understanding! Rich meat needs rich wine. Cabernet's got the power and structure to match those short ribs bite for bite."
         },
         "correctWineType": "red",
         "maxPoints": 5
       },
       {
         "id": "miles_w3",
-        "scenario": "I got this nice piece of swordfish, grilled with herbs and olive oil. Meaty fish, but still fish, you feel me?",
+        "scenario": "I got this nice piece of swordfish, grilled with herbs and olive oil. Meaty fish, but still fish, you feel me? What wine works with something in between like this?",
         "option1Wine": {
-          "wine": "Red Wine",
-          "points": 1,
-          "feedbackText": "Even though swordfish is meaty, it's still fish—white wine's the way to go."
+          "wine": "Pinot Noir",
+          "points": 3,
+          "feedbackText": "I see where you're going - swordfish is meatier than most fish. But even meaty fish works better with white wine's clean flavors. Think about the preparation, not just the texture."
         },
         "option2Wine": {
-          "wine": "White Wine",
+          "wine": "Chardonnay",
           "points": 5,
-          "feedbackText": "Exactly! You get that even meaty fish still needs white wine's touch."
+          "feedbackText": "Exactly! You get that swordfish can handle more body than delicate fish. Chardonnay's got enough richness for the herbs and olive oil while still being right for seafood."
         },
         "option3Wine": {
-          "wine": "Rosé Wine",
-          "points": 3,
-          "feedbackText": "Good thinking with the middle ground, but white wine's the classic choice here."
+          "wine": "Merlot",
+          "points": 1,
+          "feedbackText": "Even though swordfish is meaty, it's still fish - red wine's gonna clash with those ocean flavors. Stay in the white wine family, even for hearty fish."
         },
         "correctWineType": "white",
         "maxPoints": 5
@@ -73,32 +73,32 @@
     "remedial": [
       {
         "id": "miles_wr1",
-        "scenario": "I'm doing it old school—spaghetti with clam sauce, garlic, and white wine. Classic Italian-American, baby.",
+        "scenario": "Let me try this again. I'm doing spaghetti with clam sauce, garlic, and white wine - classic Italian-American style. What wine should I choose to complement this?",
         "option1Wine": {
-          "wine": "Red Wine",
-          "points": 1,
-          "feedbackText": "Come on, clam sauce calls for white wine—it's right there in the dish!"
+          "wine": "Sauvignon Blanc",
+          "points": 5,
+          "feedbackText": "Perfect! You're learning the game! White wine with white wine sauce - it echoes the dish and complements those clams beautifully. That's how you think about pairing!"
         },
         "option2Wine": {
-          "wine": "White Wine",
-          "points": 5,
-          "feedbackText": "Perfect! White wine echoes the sauce and complements those clams."
+          "wine": "Merlot",
+          "points": 1,
+          "feedbackText": "Come on, the sauce already tells you what to do! Clam sauce with white wine calls for more white wine. Red would clash with those briny flavors."
         },
         "correctWineType": "white",
         "maxPoints": 5
       },
       {
         "id": "miles_wr2",
-        "scenario": "Tonight I'm smoking some brisket low and slow. Bark's looking good, meat's gonna be butter.",
+        "scenario": "Alright, one more time. I'm smoking some brisket low and slow - bark's looking good, meat's gonna be butter. What wine can stand up to all that smoky, rich flavor?",
         "option1Wine": {
-          "wine": "Red Wine",
-          "points": 5,
-          "feedbackText": "Yes! Red wine's bold character matches that smoked brisket perfectly."
+          "wine": "Riesling",
+          "points": 1,
+          "feedbackText": "Nah, that's not gonna work! Smoked brisket needs serious wine power. Think about the intensity - you need red wine's body and tannins to match that smoke and richness."
         },
         "option2Wine": {
-          "wine": "White Wine",
-          "points": 1,
-          "feedbackText": "Smoked brisket needs red wine's intensity to match all that flavor, know what I'm saying?"
+          "wine": "Cabernet Sauvignon",
+          "points": 5,
+          "feedbackText": "Yes! Now you're thinking like a pro! Bold, smoky brisket needs bold wine. Cabernet's intensity can hang with all that flavor - perfect match!"
         },
         "correctWineType": "red",
         "maxPoints": 5
