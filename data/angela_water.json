@@ -1,0 +1,108 @@
+{
+  "angela_water.json": {
+    "character": {
+      "name": "Angela",
+      "voice": "sage",
+      "image": "angela_mentor.jpg"
+    },
+    "firstTime": [
+      {
+        "id": "angela_w1",
+        "scenario": "I could really use some guidance here. I ordered the pan-seared halibut with lemon and herbs, but I'm not sure what wine would complement it best. What would you recommend?",
+        "option1Wine": {
+          "wine": "Merlot",
+          "points": 1,
+          "feedbackText": "Merlot would overpower the delicate halibut. Fish needs wines with good acidity and lighter body. Red wines' tannins can make fish taste metallic."
+        },
+        "option2Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 5,
+          "feedbackText": "Excellent choice! Sauvignon Blanc's crisp acidity enhances the lemon while its clean, herbaceous notes complement the herbs without masking the fish's delicate flavor."
+        },
+        "option3Wine": {
+          "wine": "Chardonnay",
+          "points": 3,
+          "feedbackText": "Good thinking with white wine, but an oaked Chardonnay might be too rich. The halibut's delicate nature calls for something crisper and more acidic."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      },
+      {
+        "id": "angela_w2",
+        "scenario": "I'm a bit overwhelmed by the wine list. I have a grilled portobello mushroom with garlic and balsamic glaze. The umami flavors are quite intense. What wine would work?",
+        "option1Wine": {
+          "wine": "Pinot Noir",
+          "points": 5,
+          "feedbackText": "Perfect pairing! Pinot Noir's earthy undertones complement the mushroom's umami, while its moderate tannins handle the balsamic's acidity without overwhelming the dish."
+        },
+        "option2Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 2,
+          "feedbackText": "The acidity works with balsamic, but Sauvignon Blanc lacks the earthiness to complement mushrooms. This dish needs wine with more body and earth tones."
+        },
+        "option3Wine": {
+          "wine": "Riesling",
+          "points": 1,
+          "feedbackText": "Too delicate and sweet for this savory, umami-rich dish. The mushroom's earthiness and garlic intensity need a wine with more structure and complementary flavors."
+        },
+        "correctWineType": "red",
+        "maxPoints": 5
+      },
+      {
+        "id": "angela_w3",
+        "scenario": "Help me make a good choice here. I'm having the lobster tail with drawn butter. I want something that won't compete with the lobster's sweetness but can handle the richness. Thoughts?",
+        "option1Wine": {
+          "wine": "Cabernet Sauvignon",
+          "points": 1,
+          "feedbackText": "Far too bold! Cabernet's tannins and intensity would completely overpower lobster's delicate sweetness. Shellfish needs wines that enhance, not dominate."
+        },
+        "option2Wine": {
+          "wine": "Riesling",
+          "points": 3,
+          "feedbackText": "The sweetness complements lobster, but Riesling might not have enough body for the rich butter sauce. This dish needs more structure."
+        },
+        "option3Wine": {
+          "wine": "Chardonnay",
+          "points": 5,
+          "feedbackText": "Excellent! Chardonnay's richness matches the butter while its acidity cuts through the fat. The wine's body complements lobster without overwhelming its natural sweetness."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      }
+    ],
+    "remedial": [
+      {
+        "id": "angela_wr1",
+        "scenario": "I could really use some guidance here. I ordered the pan-seared halibut with lemon and herbs, but I'm not sure what wine would complement it best. What would you recommend?",
+        "option1Wine": {
+          "wine": "Sauvignon Blanc",
+          "points": 5,
+          "feedbackText": "Excellent! You're getting the hang of this. Sauvignon Blanc's acidity enhances lemon while complementing herbs - perfect for delicate fish."
+        },
+        "option2Wine": {
+          "wine": "Merlot",
+          "points": 1,
+          "feedbackText": "Remember: delicate fish needs delicate wine. Red wines' tannins clash with fish and can create metallic flavors."
+        },
+        "correctWineType": "white",
+        "maxPoints": 5
+      },
+      {
+        "id": "angela_wr2",
+        "scenario": "I'm a bit overwhelmed by the wine list. I have a grilled portobello mushroom with garlic and balsamic glaze. The umami flavors are quite intense. What wine would work?",
+        "option1Wine": {
+          "wine": "Riesling",
+          "points": 1,
+          "feedbackText": "Think about matching intensity! Riesling is too light for such bold, earthy flavors. Mushrooms need wines with earthiness and body."
+        },
+        "option2Wine": {
+          "wine": "Pinot Noir",
+          "points": 5,
+          "feedbackText": "Perfect! You understand that earthy dishes need earthy wines. Pinot Noir's structure handles the umami while complementing the mushroom's flavors."
+        },
+        "correctWineType": "red",
+        "maxPoints": 5
+      }
+    ]
+  }
+}
