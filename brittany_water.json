@@ -2,105 +2,105 @@
   "brittany_water.json": {
     "character": {
       "name": "Brittany",
-      "voice": "alloy",
+      "voice": "alloy", 
       "image": "brittany_genz.jpg"
     },
     "firstTime": [
       {
-        "id": "brittany_j1",
-        "scenario": "OMG, I'm having this amazing tuna poke bowl with avocado, edamame, and spicy mayo! It's like, so fresh and Instagram-perfect!",
+        "id": "brittany_w1",
+        "scenario": "Help! I ordered this tuna poke bowl with avocado and spicy mayo, but I have no clue what wine to get. The server is coming back and I'm totally lost!",
         "option1Wine": {
-          "wine": "Sauvignon Blanc",
-          "points": 5,
-          "feedbackText": "Perfect! You nailed the fresh, clean pairing!"
+          "wine": "Cabernet Sauvignon",
+          "points": 1,
+          "feedbackText": "Oops! Cabernet's bold tannins would completely overpower the delicate tuna. Raw fish needs something much lighter and more acidic to complement its clean flavors."
         },
         "option2Wine": {
-          "wine": "Riesling",
-          "points": 3,
-          "feedbackText": "Good choice! But Sauvignon Blanc would be even better."
+          "wine": "Sauvignon Blanc", 
+          "points": 5,
+          "feedbackText": "Perfect choice! Sauvignon Blanc's crisp acidity and citrus notes perfectly complement raw fish, while its clean finish won't compete with the delicate tuna flavors."
         },
         "option3Wine": {
-          "wine": "Merlot",
-          "points": 1,
-          "feedbackText": "Not quite! Red wine would overwhelm the delicate tuna."
+          "wine": "Chardonnay",
+          "points": 3,
+          "feedbackText": "Not bad, but a bit heavy. While Chardonnay works with fish, an oaked version might mask the tuna's delicate flavor. The poke bowl's freshness calls for something crisper."
         },
         "correctWineType": "white",
         "maxPoints": 5
       },
       {
-        "id": "brittany_j2",
-        "scenario": "I'm obsessed with this burrata and peach salad with arugula and balsamic glaze! Sweet, creamy, peppery—it's like flavor goals!",
+        "id": "brittany_w2", 
+        "scenario": "I'm staring at this menu and I ordered the grilled ribeye steak with garlic butter. Everyone's talking about wine but I literally don't know where to start. What should I ask for?",
         "option1Wine": {
-          "wine": "Rosé",
-          "points": 5,
-          "feedbackText": "Totally! Rosé's fresh fruitiness complements the peaches perfectly!"
+          "wine": "Riesling",
+          "points": 1,
+          "feedbackText": "Too delicate! Riesling's light body and sweetness can't stand up to a rich, fatty ribeye. You need a wine with enough tannins and body to cut through the beef's richness."
         },
         "option2Wine": {
-          "wine": "Chardonnay",
-          "points": 3,
-          "feedbackText": "Good with the burrata, but might be too heavy for the peaches."
+          "wine": "Sauvignon Blanc",
+          "points": 2,
+          "feedbackText": "Interesting choice, but not ideal. While the acidity could cut fat, Sauvignon Blanc lacks the body and tannins needed to complement the meat's robust flavors."
         },
         "option3Wine": {
           "wine": "Cabernet Sauvignon",
-          "points": 1,
-          "feedbackText": "Way too intense! This delicate salad needs something lighter."
+          "points": 5,
+          "feedbackText": "Excellent! Cabernet's bold tannins and full body are perfect for ribeye. The wine's structure cuts through the fat while its dark fruit flavors complement the meat's richness."
         },
-        "correctWineType": "rosé",
+        "correctWineType": "red",
         "maxPoints": 5
       },
       {
-        "id": "brittany_j3",
-        "scenario": "I'm totally loving this Korean BBQ beef with kimchi and jasmine rice! It's spicy, funky, and so addictive!",
+        "id": "brittany_w3",
+        "scenario": "So I got this Caesar salad with grilled chicken because I'm trying to be healthy-ish, but now they're asking about wine and I'm like... help? What goes with salad?",
         "option1Wine": {
-          "wine": "Syrah",
-          "points": 5,
-          "feedbackText": "Yes! Syrah's bold character stands up to the Korean BBQ perfectly!"
-        },
-        "option2Wine": {
           "wine": "Pinot Noir",
           "points": 3,
-          "feedbackText": "Decent with the beef, but might lack intensity for the kimchi."
+          "feedbackText": "Decent thinking with the chicken, but Caesar's anchovy dressing and parmesan create salty, briny flavors that pair better with crisp white wines than light reds."
+        },
+        "option2Wine": {
+          "wine": "Chardonnay",
+          "points": 5,
+          "feedbackText": "Smart choice! Chardonnay's body handles the chicken while its acidity cuts through the creamy Caesar dressing. The wine's richness complements the parmesan perfectly."
         },
         "option3Wine": {
-          "wine": "Riesling",
+          "wine": "Merlot",
           "points": 1,
-          "feedbackText": "Too delicate! This bold, spicy dish needs a stronger wine."
+          "feedbackText": "Too heavy! Merlot's dark fruit flavors would clash with the Caesar's briny, garlicky profile. Salads with creamy dressings need wines with good acidity."
         },
-        "correctWineType": "red",
+        "correctWineType": "white",
         "maxPoints": 5
       }
     ],
     "remedial": [
       {
-        "id": "brittany_jr1",
-        "scenario": "I'm having this cute little salmon tartare with cucumber and citrus! So fresh and aesthetic!",
+        "id": "brittany_wr1",
+        "scenario": "I keep messing up wine choices! I have grilled salmon with lemon herbs and I really don't want to look stupid again. Please help me get this right!",
         "option1Wine": {
           "wine": "Sauvignon Blanc",
           "points": 5,
-          "feedbackText": "Perfect! Crisp and fresh, just like the tartare!"
+          "feedbackText": "Perfect! You're learning! Sauvignon Blanc's herbaceous notes echo the herbs, while its acidity enhances the lemon and complements the salmon's delicate flavor."
         },
         "option2Wine": {
-          "wine": "Merlot",
+          "wine": "Cabernet Sauvignon", 
           "points": 1,
-          "feedbackText": "No way! Red wine would totally clash with the delicate salmon."
+          "feedbackText": "Remember the basic rule: delicate fish needs delicate wine. Cabernet's tannins and boldness would completely overwhelm the subtle salmon flavors."
         },
         "correctWineType": "white",
         "maxPoints": 5
       },
       {
-        "id": "brittany_jr2",
-        "scenario": "I'm obsessed with this truffle pasta carbonara! It's like, so rich and luxurious!",
+        "id": "brittany_wr2",
+        "scenario": "Last chance to prove I can do this! I ordered a big juicy burger with bacon and cheese. I want to show I understand wine pairing now!",
         "option1Wine": {
-          "wine": "Chardonnay",
-          "points": 5,
-          "feedbackText": "Amazing choice! Rich wine for a rich dish!"
+          "wine": "Riesling",
+          "points": 1,
+          "feedbackText": "Think about the weight! A rich, fatty burger needs a wine with enough body and tannins to cut through all that richness. Riesling is too light and delicate."
         },
         "option2Wine": {
-          "wine": "Sauvignon Blanc",
-          "points": 1,
-          "feedbackText": "Too light! This rich carbonara needs a fuller wine."
+          "wine": "Merlot",
+          "points": 5,
+          "feedbackText": "Excellent! You've got it! Merlot's medium body and soft tannins are perfect for burgers - rich enough to complement the meat and fat, structured enough to cleanse the palate."
         },
-        "correctWineType": "white",
+        "correctWineType": "red", 
         "maxPoints": 5
       }
     ]
