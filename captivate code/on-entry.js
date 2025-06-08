@@ -12,8 +12,12 @@
       currentCharacter = window.cpAPIInterface.getVariableValue("currentCharacter") || "brittany";
       currentRoom = window.cpAPIInterface.getVariableValue("currentRoom") || "water";
       isRemedial = window.cpAPIInterface.getVariableValue("isRemedial") === "true";
+      
+      // Debug: Show what variables we actually got
+      
+      
     } catch (e) {
-      alert("Error getting Captivate variables: " + e.message);
+      
       // Default fallback
       currentCharacter = "brittany";
       currentRoom = "water";
@@ -24,12 +28,13 @@
     currentCharacter = "brittany";
     currentRoom = "water";
     isRemedial = false;
+    
   }
   
   // FIXED: Call your existing Vercel endpoint (no .json extension)
   const apiUrl = `https://captivate-audio.vercel.app/api/${currentCharacter}_${currentRoom}`;
   
-  alert(`Loading scenario for ${currentCharacter} in ${currentRoom} room, remedial: ${isRemedial}`);
+ 
   
   // Load character data
   fetch(apiUrl)
@@ -40,25 +45,26 @@
       return response.json();
     })
     .then(data => {
-      alert("Character data loaded successfully");
+      
       
       // Debug: Show the actual data structure
-      alert("Data keys: " + Object.keys(data).join(", "));
+     
       
-      // Your JSON structure - try both ways to access the data
+      // FIXED: Your JSON structure has .json extension in the key
       let characterData;
       const characterKey = `${currentCharacter}_${currentRoom}`;
+      const characterKeyWithJson = `${currentCharacter}_${currentRoom}.json`;
       
-      if (data[characterKey]) {
+      if (data[characterKeyWithJson]) {
+        characterData = data[characterKeyWithJson];
+        
+      } else if (data[characterKey]) {
         characterData = data[characterKey];
-        alert("Found data using key: " + characterKey);
-      } else if (data.brittany_water) {
-        characterData = data.brittany_water;
-        alert("Found data using direct key: brittany_water");
+        
       } else {
-        // Maybe the data is at the root level
-        characterData = data;
-        alert("Using root level data");
+        // Show all available keys for debugging
+        
+        throw new Error(`Character data not found. Looking for: ${characterKey} or ${characterKeyWithJson}`);
       }
       
       if (!characterData || !characterData.character) {
@@ -76,7 +82,7 @@
       const randomIndex = Math.floor(Math.random() * scenarios.length);
       const selectedScenario = scenarios[randomIndex];
       
-      alert(`Selected scenario: ${selectedScenario.id}`);
+      
       
       // Populate Captivate variables
       if (typeof window.cpAPIInterface !== 'undefined') {
@@ -100,8 +106,7 @@
         // Set loading status
         window.cpAPIInterface.setVariableValue("scenarioLoaded", "true");
         
-        alert("All Captivate variables populated successfully");
-        alert(`Scenario: ${selectedScenario.scenario.substring(0, 50)}...`);
+       
       } else {
         alert("Captivate API not available - running in preview mode");
       }
