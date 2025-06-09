@@ -229,6 +229,8 @@
     }
   </style>
 </head>
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors *;">
 <body>
   <div class="container">
     <div class="loading" id="loading">Loading scenario...</div>
@@ -279,12 +281,23 @@
 
     // Set Captivate variables
     function setCaptivateVariable(variableName, value) {
-      if (window.parent && window.parent.cpAPIInterface) {
-        window.parent.cpAPIInterface.setVariableValue(variableName, value);
-      } else {
-        console.log(`Would set Captivate variable ${variableName} to:`, value);
-      }
+  try {
+    // Try multiple ways to access Captivate
+    if (window.parent && window.parent.cpAPIInterface) {
+      window.parent.cpAPIInterface.setVariableValue(variableName, value);
+    } else if (window.top && window.top.cpAPIInterface) {
+      window.top.cpAPIInterface.setVariableValue(variableName, value);
+    } else if (window.cpAPIInterface) {
+      window.cpAPIInterface.setVariableValue(variableName, value);
+    } else {
+      // Fallback - just log it
+      console.log(`Would set Captivate variable ${variableName} to:`, value);
     }
+  } catch (error) {
+    // Ignore security errors and just log
+    console.log(`Could not set Captivate variable ${variableName} due to security restrictions. Value:`, value);
+  }
+}
 
     // Load scenario data from API (matches your Captivate on-entry code exactly)
     async function loadScenarioData() {
