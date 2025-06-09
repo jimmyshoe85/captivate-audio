@@ -8,7 +8,7 @@ const VOICES = {
   jose:     { voice: "verse", instructions: "Light Spanish accent, warm." },
   kevin:    { voice: "echo",  instructions: "Mid-western trainer, steady." },
   miles:    { voice: "ash",   instructions: "Queens NY, relaxed confidence." },
-  clara:    { voice: "nova",  instructions: "Sophisticated British accent, theatrical delivery, precise articulation. Think Miranda Priestly - commanding but refined." }
+  clara:    { voice: "nova",  instructions: "Sophisticated British accent with maximum theatrical snark. Channel Miranda Priestly meeting Gordon Ramsay - devastatingly articulate insults, dripping disdain, exaggerated pauses for dramatic effect. When wrong answers: contemptuous, cutting, merciless. When correct: grudging approval with backhanded compliments. Every syllable should ooze superiority and theatrical cruelty." }
 
 };
 
