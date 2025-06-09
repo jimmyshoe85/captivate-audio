@@ -5,6 +5,7 @@
     { "src": "/api/brittany_water", "dest": "/api/brittany_water.js" },
     { "src": "/api/miles_water", "dest": "/api/miles_water.js" },
     { "src": "/api/jose_water", "dest": "/api/jose_water.js" },
-    { "src": "/api/miss_clara_evaluation", "dest": "/api/miss_clara_evaluation.js" }
+    { "src": "/api/miss_clara_evaluation", "dest": "/api/miss_clara_evaluation.js" },
+    { "src": "/webobject/(.*)", "dest": "/webobject/$1"}
   ]
 }
