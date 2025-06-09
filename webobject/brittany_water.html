@@ -1,49 +1,502 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Wine Training - Static Test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wine Training Web Object</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    .option-btn { 
-      display: block; 
-      margin: 10px 0; 
-      padding: 10px; 
-      background: #f0f0f0; 
-      border: 1px solid #ccc;
-      cursor: pointer;
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
     }
-    .option-btn:hover { background: #e0e0e0; }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    .guest-scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .guest-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .speech-bubble {
+      position: absolute;
+      top: 35%;
+      left: 45%;
+      width: 40%;
+      background: white;
+      color: #333;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #222;
+      font-size: 1.2rem;
+      line-height: 1.4;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+      transform: translateY(-50%);
+    }
+
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      left: -40px;
+      top: 20px;
+      width: 0;
+      height: 0;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-right: 40px solid white;
+      filter: drop-shadow(-1px 1px 0 #222);
+    }
+
+    .question-block {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      border: 2px solid #222;
+      padding: 1.2rem;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 100;
+    }
+    
+    .question-block.fade-in {
+      opacity: 1;
+    }
+
+    #question {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      color: #333;
+    }
+
+    #options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .option-btn {
+      background-color: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 80%;
+      text-align: left;
+      position: relative;
+    }
+
+    .option-btn:hover:not(.disabled) {
+      background-color: #eee;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .option-btn.selected {
+      background-color: #e3f2fd;
+      border-color: #2196F3;
+    }
+
+    .option-btn.correct {
+      background-color: rgba(76, 175, 80, 0.2);
+      border-color: #4CAF50;
+    }
+
+    .option-btn.incorrect {
+      background-color: rgba(244, 67, 54, 0.2);
+      border-color: #F44336;
+    }
+
+    .option-btn.disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .submit-btn {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.2s ease;
+      width: 60%;
+    }
+
+    .submit-btn:hover:not(.disabled) {
+      background-color: #1976D2;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .submit-btn.disabled {
+      background-color: #90CAF9;
+      cursor: not-allowed;
+    }
+
+    #feedback {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      line-height: 1.4;
+      min-height: 20px;
+      transition: all 0.3s ease;
+      width: 80%;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .feedback-correct {
+      background-color: rgba(76, 175, 80, 0.2);
+      border-left: 4px solid #4CAF50;
+      color: #1B5E20;
+    }
+
+    .feedback-incorrect {
+      background-color: rgba(244, 67, 54, 0.2);
+      border-left: 4px solid #F44336;
+      color: #B71C1C;
+    }
+
+    .feedback-warning {
+      background-color: rgba(255, 152, 0, 0.2);
+      border-left: 4px solid #FF9800;
+      color: #E65100;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      .speech-bubble {
+        width: 60%;
+        font-size: 1rem;
+      }
+      
+      .question-block {
+        width: 85%;
+        bottom: 5%;
+      }
+      
+      #question {
+        font-size: 1.1rem;
+      }
+      
+      .option-btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <h2>Wine Pairing Test</h2>
-  <p>I ordered a tuna poke bowl with avocado. What wine should I choose?</p>
-  
-  <button class="option-btn" onclick="selectWine('Cabernet Sauvignon')">Cabernet Sauvignon</button>
-  <button class="option-btn" onclick="selectWine('Sauvignon Blanc')">Sauvignon Blanc</button>
-  <button class="option-btn" onclick="selectWine('Chardonnay')">Chardonnay</button>
-  
-  <div id="feedback"></div>
-  
+  <div class="container">
+    <div class="loading" id="loading">Loading scenario...</div>
+    <div class="guest-scene" id="guest-scene" style="display: none;">
+      <img src="" alt="Guest" class="guest-img" />
+      <div class="speech-bubble">
+        <span id="bubble-text"></span>
+      </div>
+      <div class="question-block">
+        <div id="question">What wine would you recommend?</div>
+        <div id="options"></div>
+        <div id="feedback"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    function selectWine(wine) {
-      var feedback = document.getElementById('feedback');
-      
-      if (wine === 'Sauvignon Blanc') {
-        feedback.innerHTML = '<p style="color: green;">Correct! Sauvignon Blanc pairs perfectly with tuna.</p>';
-      } else {
-        feedback.innerHTML = '<p style="color: red;">Try again. Think about light fish needing light wine.</p>';
+    // Configuration using old-school JavaScript
+    var config = {
+      character: 'brittany',
+      room: 'water',
+      isRemedial: false
+    };
+
+    // Static scenario data (no API calls needed)
+    var scenarioData = {
+      character: {
+        name: 'Brittany',
+        voice: 'alloy',
+        image: 'img/brittany_genz.png'
+      },
+      scenario: {
+        id: 'brittany_w1',
+        scenario: "Help! I ordered this tuna poke bowl with avocado and spicy mayo, but I have no clue what wine to get. The server is coming back and I'm totally lost!",
+        option1Wine: {
+          wine: 'Cabernet Sauvignon',
+          points: 1,
+          feedbackText: "Oops! Cabernet's bold tannins would completely overpower the delicate tuna. Raw fish needs something much lighter and more acidic to complement its clean flavors."
+        },
+        option2Wine: {
+          wine: 'Sauvignon Blanc',
+          points: 5,
+          feedbackText: "Perfect choice! Sauvignon Blanc's crisp acidity and citrus notes perfectly complement raw fish, while its clean finish won't compete with the delicate tuna flavors."
+        },
+        option3Wine: {
+          wine: 'Chardonnay',
+          points: 3,
+          feedbackText: "Not bad, but a bit heavy. While Chardonnay works with fish, an oaked version might mask the tuna's delicate flavor. The poke bowl's freshness calls for something crisper."
+        },
+        correctWineType: 'white',
+        maxPoints: 5
       }
-      
-      // Try to set Captivate variable with old-school JavaScript
+    };
+
+    // Set Captivate variables (old-school try/catch)
+    function setCaptivateVariable(variableName, value) {
       try {
         if (window.parent && window.parent.cpAPIInterface) {
-          window.parent.cpAPIInterface.setVariableValue('selectedWine', wine);
-          window.parent.cpAPIInterface.setVariableValue('feedback', feedback.textContent);
+          window.parent.cpAPIInterface.setVariableValue(variableName, value);
+          console.log('Set Captivate variable ' + variableName + ' to: ' + value);
+        } else {
+          console.log('Would set Captivate variable ' + variableName + ' to: ' + value);
         }
-      } catch (e) {
-        console.log('Captivate API not available');
+      } catch (error) {
+        console.log('Could not set Captivate variable due to security restrictions. Variable: ' + variableName + ', Value: ' + value);
       }
+    }
+
+    // Type text animation (old-school)
+    function typeText(element, text, callback) {
+      element.textContent = '';
+      var i = 0;
+      function type() {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, 35);
+        } else if (callback) {
+          callback();
+        }
+      }
+      type();
+    }
+
+    // Setup wine selection interface
+    function setupWineSelection(scenario) {
+      var questionElement = document.getElementById('question');
+      var optionsElement = document.getElementById('options');
+      var feedbackElement = document.getElementById('feedback');
+      
+      console.log('Setting up wine selection with scenario');
+      
+      // Clear previous content
+      optionsElement.innerHTML = '';
+      feedbackElement.textContent = '';
+      
+      // Create wine options
+      var options = [
+        {
+          label: scenario.option1Wine.wine,
+          isCorrect: scenario.option1Wine.points === scenario.maxPoints,
+          feedback: scenario.option1Wine.feedbackText,
+          points: scenario.option1Wine.points
+        },
+        {
+          label: scenario.option2Wine.wine,
+          isCorrect: scenario.option2Wine.points === scenario.maxPoints,
+          feedback: scenario.option2Wine.feedbackText,
+          points: scenario.option2Wine.points
+        },
+        {
+          label: scenario.option3Wine.wine,
+          isCorrect: scenario.option3Wine.points === scenario.maxPoints,
+          feedback: scenario.option3Wine.feedbackText,
+          points: scenario.option3Wine.points
+        }
+      ];
+      
+      console.log('Wine options created');
+      
+      // Create option buttons
+      for (var i = 0; i < options.length; i++) {
+        var opt = options[i];
+        var btn = document.createElement('button');
+        btn.textContent = opt.label;
+        btn.className = 'option-btn';
+        btn.setAttribute('data-is-correct', opt.isCorrect);
+        btn.setAttribute('data-feedback', opt.feedback);
+        btn.setAttribute('data-points', opt.points);
+        
+        // Use closure to capture the button reference
+        (function(button) {
+          button.onclick = function() {
+            var submitBtn = document.querySelector('.submit-btn');
+            if (!submitBtn || !submitBtn.disabled) {
+              // Deselect all other options
+              var allButtons = document.querySelectorAll('.option-btn');
+              for (var j = 0; j < allButtons.length; j++) {
+                allButtons[j].classList.remove('selected');
+              }
+              // Select this option
+              button.classList.add('selected');
+              console.log('Selected wine: ' + button.textContent);
+            }
+          };
+        })(btn);
+        
+        optionsElement.appendChild(btn);
+      }
+      
+      // Create submit button
+      var submitBtn = document.createElement('button');
+      submitBtn.textContent = 'Submit Answer';
+      submitBtn.className = 'submit-btn';
+      submitBtn.onclick = handleSubmit;
+      
+      // Add spacer and submit button
+      var spacer = document.createElement('div');
+      optionsElement.appendChild(spacer);
+      optionsElement.appendChild(submitBtn);
+      
+      console.log('Wine selection setup complete');
+    }
+
+    // Handle answer submission
+    function handleSubmit() {
+      var selectedOption = document.querySelector('.option-btn.selected');
+      var feedbackElement = document.getElementById('feedback');
+      
+      if (!selectedOption) {
+        feedbackElement.textContent = 'Please select an answer first.';
+        feedbackElement.classList.remove('feedback-correct', 'feedback-incorrect');
+        feedbackElement.classList.add('feedback-warning');
+        return;
+      }
+      
+      // Disable all buttons
+      var allButtons = document.querySelectorAll('.option-btn');
+      for (var i = 0; i < allButtons.length; i++) {
+        allButtons[i].disabled = true;
+        allButtons[i].classList.add('disabled');
+      }
+      document.querySelector('.submit-btn').disabled = true;
+      document.querySelector('.submit-btn').classList.add('disabled');
+      
+      // Get values from selected option
+      var isCorrect = selectedOption.getAttribute('data-is-correct') === 'true';
+      var feedback = selectedOption.getAttribute('data-feedback');
+      var points = parseInt(selectedOption.getAttribute('data-points')) || 0;
+      
+      // Display feedback immediately
+      feedbackElement.classList.remove('feedback-correct', 'feedback-incorrect', 'feedback-warning');
+      feedbackElement.textContent = feedback;
+      
+      if (isCorrect) {
+        feedbackElement.classList.add('feedback-correct');
+        selectedOption.classList.add('correct');
+      } else {
+        feedbackElement.classList.add('feedback-incorrect');
+        selectedOption.classList.add('incorrect');
+        
+        // Highlight correct answer
+        var allButtons = document.querySelectorAll('.option-btn');
+        for (var i = 0; i < allButtons.length; i++) {
+          if (allButtons[i].getAttribute('data-is-correct') === 'true') {
+            allButtons[i].classList.add('correct');
+          }
+        }
+      }
+      
+      // Send data to Captivate
+      setCaptivateVariable('feedbackText', feedback);
+      setCaptivateVariable('userScore', points);
+      setCaptivateVariable('isCorrect', isCorrect ? 1 : 0);
+      setCaptivateVariable('wineSelected', selectedOption.textContent);
+      setCaptivateVariable('selectionComplete', 'true');
+      
+      console.log('Wine selection complete:', {
+        points: points,
+        feedback: feedback,
+        isCorrect: isCorrect,
+        wine: selectedOption.textContent
+      });
+    }
+
+    // Main initialization (old-school)
+    function init() {
+      try {
+        console.log('Initializing wine training');
+        
+        // Hide loading, show scene
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('guest-scene').style.display = 'block';
+        
+        // Set character image
+        var imgPath = 'img/brittany_genz.png';
+        document.querySelector('.guest-img').src = imgPath;
+        
+        // Type out scenario text
+        var bubble = document.getElementById('bubble-text');
+        typeText(bubble, scenarioData.scenario.scenario, function() {
+          // After typing completes, setup and show question block
+          console.log('Text typing complete, setting up wine selection');
+          setupWineSelection(scenarioData.scenario);
+          
+          var questionBlock = document.querySelector('.question-block');
+          if (questionBlock) {
+            questionBlock.classList.add('fade-in');
+            console.log('Question block should now be visible');
+          }
+        });
+        
+        // Set Captivate variables
+        setCaptivateVariable('characterName', scenarioData.character.name);
+        setCaptivateVariable('scenarioText', scenarioData.scenario.scenario);
+        setCaptivateVariable('scenarioId', scenarioData.scenario.id);
+        setCaptivateVariable('scenarioLoaded', 'true');
+        
+      } catch (error) {
+        console.error('Initialization error:', error);
+        document.getElementById('loading').textContent = 'Error loading scenario. Please try again.';
+      }
+    }
+
+    // Start when page loads (old-school)
+    if (document.addEventListener) {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      window.onload = init;
     }
   </script>
 </body>
