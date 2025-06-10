@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wine Training Web Object - API Version</title>
+  <title>Wine Training Web Object</title>
   <style>
     html, body {
       margin: 0;
@@ -204,21 +204,6 @@
       transform: translate(-50%, -50%);
       font-size: 1.2rem;
       color: #666;
-      text-align: center;
-    }
-
-    .error {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 1.1rem;
-      color: #d32f2f;
-      text-align: center;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      border: 2px solid #d32f2f;
     }
 
     @media (max-width: 768px) {
@@ -245,7 +230,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="loading" id="loading">Loading scenario from API...</div>
+    <div class="loading" id="loading">Loading scenario...</div>
     <div class="guest-scene" id="guest-scene" style="display: none;">
       <img src="" alt="Guest" class="guest-img" />
       <div class="speech-bubble">
@@ -260,120 +245,62 @@
   </div>
 
   <script>
-    // Configuration - gets values from URL parameters or defaults
+    // Configuration using old-school JavaScript
     var config = {
       character: 'brittany',
       room: 'water',
       isRemedial: false
     };
 
-    // Global variable to store scenario data
-    var currentScenarioData = null;
+    // Static scenario data (no API calls needed)
+    var scenarioData = {
+      character: {
+        name: 'Brittany',
+        voice: 'alloy',
+        image: 'img/brittany_genz.png'
+      },
+      scenario: {
+        id: 'brittany_w1',
+        scenario: "Help! I ordered this tuna poke bowl with avocado and spicy mayo, but I have no clue what wine to get. The server is coming back and I'm totally lost!",
+        option1Wine: {
+          wine: 'Cabernet Sauvignon',
+          points: 1,
+          feedbackText: "Oops! Cabernet's bold tannins would completely overpower the delicate tuna. Raw fish needs something much lighter and more acidic to complement its clean flavors."
+        },
+        option2Wine: {
+          wine: 'Sauvignon Blanc',
+          points: 5,
+          feedbackText: "Perfect choice! Sauvignon Blanc's crisp acidity and citrus notes perfectly complement raw fish, while its clean finish won't compete with the delicate tuna flavors."
+        },
+        option3Wine: {
+          wine: 'Chardonnay',
+          points: 3,
+          feedbackText: "Not bad, but a bit heavy. While Chardonnay works with fish, an oaked version might mask the tuna's delicate flavor. The poke bowl's freshness calls for something crisper."
+        },
+        correctWineType: 'white',
+        maxPoints: 5
+      }
+    };
 
-    // Parse URL parameters to override config
-    function parseURLParams() {
-      var urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('character')) config.character = urlParams.get('character');
-      if (urlParams.get('room')) config.room = urlParams.get('room');
-      if (urlParams.get('remedial')) config.isRemedial = urlParams.get('remedial') === 'true';
-      
-      console.log('Configuration:', config);
-    }
-
-    // Set Captivate variables using postMessage (cross-origin safe)
+    // MODIFIED: Set Captivate variables using postMessage (cross-origin safe)
     function setCaptivateVariable(variableName, value) {
       if (window.parent) {
+        // Send message to parent Captivate frame
         window.parent.postMessage({
           type: 'setCaptivateVariable',
           variable: variableName,
           value: value
-        }, '*');
-        console.log('Sent to Captivate: ' + variableName + ' = ' + value);
+        }, '*'); // Use '*' for compatibility, or specify your LMS domain for security
+        console.log('Attempted to postMessage for Captivate variable ' + variableName + ' with value: ' + value);
       } else {
-        console.log('No parent window - would set: ' + variableName + ' = ' + value);
+        console.log('No parent window found to postMessage to.');
       }
     }
 
-    // Get Captivate variables (returns default due to cross-origin restrictions)
+    // getCaptivateVariable will return default values due to cross-origin restrictions
     function getCaptivateVariable(variableName) {
-      console.log('Cannot get Captivate variable due to cross-origin restrictions: ' + variableName);
-      return '0'; // Default fallback
-    }
-
-    // Load scenario data from API using XMLHttpRequest (old-school for Captivate compatibility)
-    function loadScenarioData(callback) {
-      var apiUrl = 'https://captivate-audio.vercel.app/api/' + config.character + '_' + config.room;
-      console.log('Loading from API:', apiUrl);
-      
-      var xhr = new XMLHttpRequest();
-      
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) { // Request completed
-          if (xhr.status === 200) { // Success
-            try {
-              var data = JSON.parse(xhr.responseText);
-              console.log('Raw API response:', data);
-              
-              // Extract character data (matching your API structure)
-              var characterKey = config.character + '_' + config.room + '.json';
-              var characterData = data[characterKey];
-              
-              if (!characterData || !characterData.character) {
-                console.error('Available keys:', Object.keys(data));
-                throw new Error('Character data not found for key: ' + characterKey);
-              }
-              
-              console.log('Found character data:', characterData);
-              
-              // Choose scenario set based on remedial status
-              var scenarios = config.isRemedial ? characterData.remedial : characterData.firstTime;
-              if (!scenarios || scenarios.length === 0) {
-                throw new Error('No scenarios found for ' + (config.isRemedial ? 'remedial' : 'first time'));
-              }
-              
-              console.log('Available scenarios:', scenarios.length);
-              
-              // Randomly select a scenario
-              var randomIndex = Math.floor(Math.random() * scenarios.length);
-              var selectedScenario = scenarios[randomIndex];
-              
-              console.log('Selected scenario:', selectedScenario);
-              
-              // Return the processed data via callback
-              callback(null, {
-                character: characterData.character,
-                scenario: selectedScenario
-              });
-              
-            } catch (parseError) {
-              console.error('Error parsing API response:', parseError);
-              callback(parseError, null);
-            }
-          } else {
-            // HTTP error
-            var error = new Error('HTTP error! status: ' + xhr.status + ' - ' + xhr.statusText);
-            console.error('API call failed:', error);
-            callback(error, null);
-          }
-        }
-      };
-      
-      xhr.onerror = function() {
-        var error = new Error('Network error occurred');
-        console.error('Network error:', error);
-        callback(error, null);
-      };
-      
-      xhr.ontimeout = function() {
-        var error = new Error('Request timed out');
-        console.error('Timeout error:', error);
-        callback(error, null);
-      };
-      
-      // Configure and send request
-      xhr.open('GET', apiUrl, true); // true = asynchronous
-      xhr.timeout = 10000; // 10 second timeout
-      xhr.send();
+      console.log('Cannot get Captivate variable due to cross-origin restrictions. Returning default: ' + variableName);
+      return '0'; // Default fallback - SOP prevents direct access
     }
 
     // Type text animation (old-school)
@@ -398,13 +325,13 @@
       var optionsElement = document.getElementById('options');
       var feedbackElement = document.getElementById('feedback');
       
-      console.log('Setting up wine selection with scenario:', scenario);
+      console.log('Setting up wine selection with scenario');
       
       // Clear previous content
       optionsElement.innerHTML = '';
       feedbackElement.textContent = '';
       
-      // Create wine options from API data
+      // Create wine options
       var options = [
         {
           label: scenario.option1Wine.wine,
@@ -426,7 +353,7 @@
         }
       ];
       
-      console.log('Wine options created:', options);
+      console.log('Wine options created');
       
       // Create option buttons
       for (var i = 0; i < options.length; i++) {
@@ -437,8 +364,6 @@
         btn.setAttribute('data-is-correct', opt.isCorrect);
         btn.setAttribute('data-feedback', opt.feedback);
         btn.setAttribute('data-points', opt.points);
-        
-        console.log('Creating button ' + (i + 1) + ':', opt.label, 'Points:', opt.points);
         
         // Use closure to capture the button reference
         (function(button) {
@@ -452,7 +377,7 @@
               }
               // Select this option
               button.classList.add('selected');
-              console.log('Selected wine:', button.textContent);
+              console.log('Selected wine: ' + button.textContent);
             }
           };
         })(btn);
@@ -471,10 +396,10 @@
       optionsElement.appendChild(spacer);
       optionsElement.appendChild(submitBtn);
       
-      console.log('Wine selection setup complete - options should be visible');
+      console.log('Wine selection setup complete');
     }
 
-    // Handle answer submission
+    // Handle answer submission (updated to match Captivate structure)
     function handleSubmit() {
       var selectedOption = document.querySelector('.option-btn.selected');
       var feedbackElement = document.getElementById('feedback');
@@ -525,10 +450,10 @@
       setCaptivateVariable('feedbackText', feedback);
       
       // Get current wine type performance tracking
-      var wineType = currentScenarioData.scenario.correctWineType;
-      var maxPoints = currentScenarioData.scenario.maxPoints;
+      var wineType = scenarioData.scenario.correctWineType;
+      var maxPoints = scenarioData.scenario.maxPoints;
       
-      // Update wine type performance tracking (using defaults due to cross-origin restrictions)
+      // Update wine type performance tracking (matching your Captivate logic)
       if (wineType === 'red') {
         var redPossible = parseInt(getCaptivateVariable('redWinePossible') || '0');
         var redActual = parseInt(getCaptivateVariable('redWineActual') || '0');
@@ -550,7 +475,7 @@
       setCaptivateVariable('wineSelected', wineSelected);
       setCaptivateVariable('selectionComplete', 'true');
       
-      console.log('Wine selection complete - All variables sent to Captivate:', {
+      console.log('Wine selection complete - Captivate variables updated:', {
         feedbackText: feedback,
         userScore: points,
         wineSelected: wineSelected,
@@ -559,83 +484,50 @@
       });
     }
 
-    // Show error message
-    function showError(message) {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('guest-scene').style.display = 'none';
-      
-      var errorDiv = document.createElement('div');
-      errorDiv.className = 'error';
-      errorDiv.innerHTML = '<h3>Loading Error</h3><p>' + message + '</p><p>Check console for details.</p>';
-      document.querySelector('.container').appendChild(errorDiv);
-    }
-
-    // Main initialization function
+    // Main initialization (old-school)
     function init() {
       try {
-        console.log('Initializing wine training with API integration');
-        parseURLParams(); // Get character/room from URL if provided
+        console.log('Initializing wine training');
         
-        // Show loading state
-        document.getElementById('loading').style.display = 'block';
-        document.getElementById('guest-scene').style.display = 'none';
+        // Hide loading, show scene
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('guest-scene').style.display = 'block';
         
-        // Load data from API
-        loadScenarioData(function(error, data) {
-          if (error) {
-            console.error('Failed to load scenario data:', error);
-            showError('Failed to load scenario data: ' + error.message);
-            return;
+        // Set character image
+        var imgPath = 'img/brittany_genz.png';
+        document.querySelector('.guest-img').src = imgPath;
+        
+        // Type out scenario text
+        var bubble = document.getElementById('bubble-text');
+        typeText(bubble, scenarioData.scenario.scenario, function() {
+          // After typing completes, setup and show question block
+          console.log('Text typing complete, setting up wine selection');
+          setupWineSelection(scenarioData.scenario);
+          
+          var questionBlock = document.querySelector('.question-block');
+          if (questionBlock) {
+            questionBlock.classList.add('fade-in');
+            console.log('Question block should now be visible');
           }
-          
-          // Store data globally for later use
-          currentScenarioData = data;
-          
-          console.log('Scenario data loaded successfully:', data);
-          
-          // Hide loading, show scene
-          document.getElementById('loading').style.display = 'none';
-          document.getElementById('guest-scene').style.display = 'block';
-          
-          // Set character image
-          var imgPath = 'img/' + data.character.image.split('/').pop();
-          document.querySelector('.guest-img').src = imgPath;
-          console.log('Set character image:', imgPath);
-          
-          // Type out scenario text
-          var bubble = document.getElementById('bubble-text');
-          typeText(bubble, data.scenario.scenario, function() {
-            // After typing completes, setup and show question block
-            console.log('Text typing complete, setting up wine selection');
-            setupWineSelection(data.scenario);
-            
-            var questionBlock = document.querySelector('.question-block');
-            if (questionBlock) {
-              questionBlock.classList.add('fade-in');
-              console.log('Question block should now be visible');
-            }
-          });
-          
-          // Set Captivate variables (matching your structure)
-          setCaptivateVariable('characterName', data.character.name);
-          setCaptivateVariable('characterVoice', data.character.voice);
-          setCaptivateVariable('characterImage', data.character.image);
-          setCaptivateVariable('scenarioText', data.scenario.scenario);
-          setCaptivateVariable('scenarioId', data.scenario.id);
-          setCaptivateVariable('scenarioLoaded', 'true');
-          
-          // Store scenario data as JSON string (for your Captivate button logic)
-          setCaptivateVariable('currentScenarioData', JSON.stringify(data.scenario));
-          
-          // Set individual wine options (matching your structure)
-          setCaptivateVariable('option1Wine', data.scenario.option1Wine.wine);
-          setCaptivateVariable('option2Wine', data.scenario.option2Wine.wine);
-          setCaptivateVariable('option3Wine', data.scenario.option3Wine.wine);
         });
+        
+        // Set Captivate variables (matching your structure)
+        setCaptivateVariable('characterName', scenarioData.character.name);
+        setCaptivateVariable('scenarioText', scenarioData.scenario.scenario);
+        setCaptivateVariable('scenarioId', scenarioData.scenario.id);
+        setCaptivateVariable('scenarioLoaded', 'true');
+        
+        // Store scenario data as JSON string (matching your Captivate button logic)
+        setCaptivateVariable('currentScenarioData', JSON.stringify(scenarioData.scenario));
+        
+        // Set individual wine options (matching your structure)
+        setCaptivateVariable('option1Wine', scenarioData.scenario.option1Wine.wine);
+        setCaptivateVariable('option2Wine', scenarioData.scenario.option2Wine.wine);
+        setCaptivateVariable('option3Wine', scenarioData.scenario.option3Wine.wine);
         
       } catch (error) {
         console.error('Initialization error:', error);
-        showError('Initialization failed: ' + error.message);
+        document.getElementById('loading').textContent = 'Error loading scenario. Please try again.';
       }
     }
 
