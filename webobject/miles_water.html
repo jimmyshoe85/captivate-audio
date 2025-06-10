@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wine Training Web Object - Fixed Version</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    .guest-scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .guest-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .speech-bubble {
+      position: absolute;
+      top: 35%;
+      left: 45%;
+      width: 40%;
+      background: white;
+      color: #333;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #222;
+      font-size: 1.2rem;
+      line-height: 1.4;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+      transform: translateY(-50%);
+    }
+
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      left: -40px;
+      top: 20px;
+      width: 0;
+      height: 0;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-right: 40px solid white;
+      filter: drop-shadow(-1px 1px 0 #222);
+    }
+
+    .question-block {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      border: 2px solid #222;
+      padding: 1.2rem;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 100;
+    }
+    
+    .question-block.fade-in {
+      opacity: 1;
+    }
+
+    #question {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      color: #333;
+    }
+
+    #options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .option-btn {
+      background-color: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 80%;
+      text-align: left;
+      position: relative;
+    }
+
+    .option-btn:hover:not(.disabled) {
+      background-color: #eee;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .option-btn.selected {
+      background-color: #e3f2fd;
+      border-color: #2196F3;
+    }
+
+    .option-btn.correct {
+      background-color: rgba(76, 175, 80, 0.2);
+      border-color: #4CAF50;
+    }
+
+    .option-btn.incorrect {
+      background-color: rgba(244, 67, 54, 0.2);
+      border-color: #F44336;
+    }
+
+    .option-btn.disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .submit-btn {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.2s ease;
+      width: 60%;
+    }
+
+    .submit-btn:hover:not(.disabled) {
+      background-color: #1976D2;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .submit-btn.disabled {
+      background-color: #90CAF9;
+      cursor: not-allowed;
+    }
+
+    #feedback {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      line-height: 1.4;
+      min-height: 20px;
+      transition: all 0.3s ease;
+      width: 80%;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .feedback-correct {
+      background-color: rgba(76, 175, 80, 0.2);
+      border-left: 4px solid #4CAF50;
+      color: #1B5E20;
+    }
+
+    .feedback-incorrect {
+      background-color: rgba(244, 67, 54, 0.2);
+      border-left: 4px solid #F44336;
+      color: #B71C1C;
+    }
+
+    .feedback-warning {
+      background-color: rgba(255, 152, 0, 0.2);
+      border-left: 4px solid #FF9800;
+      color: #E65100;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      color: #666;
+      text-align: center;
+    }
+
+    .error {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.1rem;
+      color: #d32f2f;
+      text-align: center;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      border: 2px solid #d32f2f;
+    }
+
+    @media (max-width: 768px) {
+      .speech-bubble {
+        width: 60%;
+        font-size: 1rem;
+      }
+      
+      .question-block {
+        width: 85%;
+        bottom: 5%;
+      }
+      
+      #question {
+        font-size: 1.1rem;
+      }
+      
+      .option-btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="loading" id="loading">Loading scenario from API...</div>
+    <div class="guest-scene" id="guest-scene" style="display: none;">
+      <img src="" alt="Guest" class="guest-img" />
+      <div class="speech-bubble">
+        <span id="bubble-text"></span>
+      </div>
+      <div class="question-block">
+        <div id="question">What wine would you recommend?</div>
+        <div id="options"></div>
+        <div id="feedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration - gets values from URL parameters or defaults
+    var config = {
+      character: 'miles',
+      room: 'water',
+      isRemedial: false
+    };
+
+    // Global variables for score tracking
+    var currentScenarioData = null;
+    var CURRENT_SCORES = {
+      totalScore: 0,
+      redWinePossible: 0,
+      redWineActual: 0,
+      whiteWinePossible: 0,
+      whiteWineActual: 0,
+      scenariosCompleted: 0
+    };
+    var scoresReceived = false;
+
+    // Parse URL parameters to override config
+    function parseURLParams() {
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('character')) config.character = urlParams.get('character');
+      if (urlParams.get('room')) config.room = urlParams.get('room');
+      if (urlParams.get('remedial')) config.isRemedial = urlParams.get('remedial') === 'true';
+      
+      console.log('Configuration:', config);
+    }
+
+    // FIXED: Set Captivate variables with proper data types
+    function setCaptivateVariable(variableName, value) {
+      // Ensure proper data types
+      var processedValue = value;
+      
+      if (variableName === 'selectionComplete') {
+        // Boolean/number conversion - send 1 for true, 0 for false
+        processedValue = (value === true || value === 1 || value === '1') ? 1 : 0;
+      } else if (variableName.includes('Score') || 
+                 variableName.includes('Possible') || 
+                 variableName.includes('Actual') ||
+                 variableName.includes('Completed')) {
+        // Ensure numbers are numbers
+        processedValue = parseInt(value) || 0;
+      }
+      
+      if (window.parent) {
+        window.parent.postMessage({
+          type: 'setCaptivateVariable',
+          variable: variableName,
+          value: processedValue
+        }, '*');
+        console.log('Sent to Captivate: ' + variableName + ' = ' + processedValue + ' (type: ' + typeof processedValue + ')');
+      } else {
+        console.log('No parent window - would set: ' + variableName + ' = ' + processedValue);
+      }
+    }
+
+    // NEW: Request current score values from Captivate
+    function requestCurrentScores() {
+      console.log('Requesting current scores from Captivate...');
+      if (window.parent) {
+        window.parent.postMessage({
+          type: 'requestCaptivateVariables',
+          variables: ['totalScore', 'redWinePossible', 'redWineActual', 'whiteWinePossible', 'whiteWineActual', 'scenariosCompleted']
+        }, '*');
+      }
+    }
+
+    // NEW: Listen for score response from Captivate
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'captivateVariableResponse') {
+        CURRENT_SCORES = {
+          totalScore: parseInt(event.data.values.totalScore) || 0,
+          redWinePossible: parseInt(event.data.values.redWinePossible) || 0,
+          redWineActual: parseInt(event.data.values.redWineActual) || 0,
+          whiteWinePossible: parseInt(event.data.values.whiteWinePossible) || 0,
+          whiteWineActual: parseInt(event.data.values.whiteWineActual) || 0,
+          scenariosCompleted: parseInt(event.data.values.scenariosCompleted) || 0
+        };
+        scoresReceived = true;
+        console.log('Received current scores from Captivate:', CURRENT_SCORES);
+      }
+    }, false);
+
+    // Load scenario data from API using XMLHttpRequest (old-school for Captivate compatibility)
+    function loadScenarioData(callback) {
+      var apiUrl = 'https://captivate-audio.vercel.app/api/' + config.character + '_' + config.room;
+      console.log('Loading from API:', apiUrl);
+      
+      var xhr = new XMLHttpRequest();
+      
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) { // Request completed
+          if (xhr.status === 200) { // Success
+            try {
+              var data = JSON.parse(xhr.responseText);
+              console.log('Raw API response:', data);
+              
+              // Extract character data (matching your API structure)
+              var characterKey = config.character + '_' + config.room + '.json';
+              var characterData = data[characterKey];
+              
+              if (!characterData || !characterData.character) {
+                console.error('Available keys:', Object.keys(data));
+                throw new Error('Character data not found for key: ' + characterKey);
+              }
+              
+              console.log('Found character data:', characterData);
+              
+              // Choose scenario set based on remedial status
+              var scenarios = config.isRemedial ? characterData.remedial : characterData.firstTime;
+              if (!scenarios || scenarios.length === 0) {
+                throw new Error('No scenarios found for ' + (config.isRemedial ? 'remedial' : 'first time'));
+              }
+              
+              console.log('Available scenarios:', scenarios.length);
+              
+              // Randomly select a scenario
+              var randomIndex = Math.floor(Math.random() * scenarios.length);
+              var selectedScenario = scenarios[randomIndex];
+              
+              console.log('Selected scenario:', selectedScenario);
+              
+              // Return the processed data via callback
+              callback(null, {
+                character: characterData.character,
+                scenario: selectedScenario
+              });
+              
+            } catch (parseError) {
+              console.error('Error parsing API response:', parseError);
+              callback(parseError, null);
+            }
+          } else {
+            // HTTP error
+            var error = new Error('HTTP error! status: ' + xhr.status + ' - ' + xhr.statusText);
+            console.error('API call failed:', error);
+            callback(error, null);
+          }
+        }
+      };
+      
+      xhr.onerror = function() {
+        var error = new Error('Network error occurred');
+        console.error('Network error:', error);
+        callback(error, null);
+      };
+      
+      xhr.ontimeout = function() {
+        var error = new Error('Request timed out');
+        console.error('Timeout error:', error);
+        callback(error, null);
+      };
+      
+      // Configure and send request
+      xhr.open('GET', apiUrl, true); // true = asynchronous
+      xhr.timeout = 10000; // 10 second timeout
+      xhr.send();
+    }
+
+    // Type text animation (old-school)
+    function typeText(element, text, callback) {
+      element.textContent = '';
+      var i = 0;
+      function type() {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, 35);
+        } else if (callback) {
+          callback();
+        }
+      }
+      type();
+    }
+
+    // Setup wine selection interface
+    function setupWineSelection(scenario) {
+      var questionElement = document.getElementById('question');
+      var optionsElement = document.getElementById('options');
+      var feedbackElement = document.getElementById('feedback');
+      
+      console.log('Setting up wine selection with scenario:', scenario);
+      
+      // Clear previous content
+      optionsElement.innerHTML = '';
+      feedbackElement.textContent = '';
+      
+      // Create wine options from API data
+      var options = [
+        {
+          label: scenario.option1Wine.wine,
+          isCorrect: scenario.option1Wine.points === scenario.maxPoints,
+          feedback: scenario.option1Wine.feedbackText,
+          points: scenario.option1Wine.points
+        },
+        {
+          label: scenario.option2Wine.wine,
+          isCorrect: scenario.option2Wine.points === scenario.maxPoints,
+          feedback: scenario.option2Wine.feedbackText,
+          points: scenario.option2Wine.points
+        },
+        {
+          label: scenario.option3Wine.wine,
+          isCorrect: scenario.option3Wine.points === scenario.maxPoints,
+          feedback: scenario.option3Wine.feedbackText,
+          points: scenario.option3Wine.points
+        }
+      ];
+      
+      console.log('Wine options created:', options);
+      
+      // Create option buttons
+      for (var i = 0; i < options.length; i++) {
+        var opt = options[i];
+        var btn = document.createElement('button');
+        btn.textContent = opt.label;
+        btn.className = 'option-btn';
+        btn.setAttribute('data-is-correct', opt.isCorrect);
+        btn.setAttribute('data-feedback', opt.feedback);
+        btn.setAttribute('data-points', opt.points);
+        
+        console.log('Creating button ' + (i + 1) + ':', opt.label, 'Points:', opt.points);
+        
+        // Use closure to capture the button reference
+        (function(button) {
+          button.onclick = function() {
+            var submitBtn = document.querySelector('.submit-btn');
+            if (!submitBtn || !submitBtn.disabled) {
+              // Deselect all other options
+              var allButtons = document.querySelectorAll('.option-btn');
+              for (var j = 0; j < allButtons.length; j++) {
+                allButtons[j].classList.remove('selected');
+              }
+              // Select this option
+              button.classList.add('selected');
+              console.log('Selected wine:', button.textContent);
+            }
+          };
+        })(btn);
+        
+        optionsElement.appendChild(btn);
+      }
+      
+      // Create submit button
+      var submitBtn = document.createElement('button');
+      submitBtn.textContent = 'Submit Answer';
+      submitBtn.className = 'submit-btn';
+      submitBtn.onclick = handleSubmit;
+      
+      // Add spacer and submit button
+      var spacer = document.createElement('div');
+      optionsElement.appendChild(spacer);
+      optionsElement.appendChild(submitBtn);
+      
+      console.log('Wine selection setup complete - options should be visible');
+    }
+
+    // FIXED: Handle answer submission with proper score accumulation
+    function handleSubmit() {
+      var selectedOption = document.querySelector('.option-btn.selected');
+      var feedbackElement = document.getElementById('feedback');
+      
+      if (!selectedOption) {
+        feedbackElement.textContent = 'Please select an answer first.';
+        feedbackElement.classList.remove('feedback-correct', 'feedback-incorrect');
+        feedbackElement.classList.add('feedback-warning');
+        return;
+      }
+      
+      // Disable all buttons
+      var allButtons = document.querySelectorAll('.option-btn');
+      for (var i = 0; i < allButtons.length; i++) {
+        allButtons[i].disabled = true;
+        allButtons[i].classList.add('disabled');
+      }
+      document.querySelector('.submit-btn').disabled = true;
+      document.querySelector('.submit-btn').classList.add('disabled');
+      
+      // Get values from selected option
+      var isCorrect = selectedOption.getAttribute('data-is-correct') === 'true';
+      var feedback = selectedOption.getAttribute('data-feedback');
+      var points = parseInt(selectedOption.getAttribute('data-points')) || 0;
+      var wineSelected = selectedOption.textContent;
+      
+      // Display feedback immediately
+      feedbackElement.classList.remove('feedback-correct', 'feedback-incorrect', 'feedback-warning');
+      feedbackElement.textContent = feedback;
+      
+      if (isCorrect) {
+        feedbackElement.classList.add('feedback-correct');
+        selectedOption.classList.add('correct');
+      } else {
+        feedbackElement.classList.add('feedback-incorrect');
+        selectedOption.classList.add('incorrect');
+        
+        // Highlight correct answer
+        var allButtons = document.querySelectorAll('.option-btn');
+        for (var i = 0; i < allButtons.length; i++) {
+          if (allButtons[i].getAttribute('data-is-correct') === 'true') {
+            allButtons[i].classList.add('correct');
+          }
+        }
+      }
+      
+      // FIXED: Use current scores for proper accumulation
+      var wineType = currentScenarioData.scenario.correctWineType;
+      var maxPoints = currentScenarioData.scenario.maxPoints;
+      
+      console.log('Processing scores - Current:', CURRENT_SCORES);
+      console.log('Adding points:', points, 'Max points:', maxPoints, 'Wine type:', wineType);
+      
+      // Calculate new totals
+      var newTotalScore = CURRENT_SCORES.totalScore + points;
+      var newScenariosCompleted = CURRENT_SCORES.scenariosCompleted + 1;
+      
+      // Update wine type specific scores
+      var newRedPossible = CURRENT_SCORES.redWinePossible;
+      var newRedActual = CURRENT_SCORES.redWineActual;
+      var newWhitePossible = CURRENT_SCORES.whiteWinePossible;
+      var newWhiteActual = CURRENT_SCORES.whiteWineActual;
+      
+      if (wineType === 'red') {
+        newRedPossible += maxPoints;
+        newRedActual += points;
+      } else if (wineType === 'white') {
+        newWhitePossible += maxPoints;
+        newWhiteActual += points;
+      }
+      
+      // FIXED: Send all variables with proper data types
+      setCaptivateVariable('feedbackText', feedback);                    // String
+      setCaptivateVariable('userScore', points);                         // Number
+      setCaptivateVariable('isCorrect', isCorrect ? 1 : 0);             // Number (1/0)
+      setCaptivateVariable('wineSelected', wineSelected);               // String
+      setCaptivateVariable('selectionComplete', true);                  // Boolean -> 1
+      
+      // Send updated accumulative scores
+      setCaptivateVariable('totalScore', newTotalScore);                // Number
+      setCaptivateVariable('redWinePossible', newRedPossible);         // Number
+      setCaptivateVariable('redWineActual', newRedActual);             // Number
+      setCaptivateVariable('whiteWinePossible', newWhitePossible);     // Number
+      setCaptivateVariable('whiteWineActual', newWhiteActual);         // Number
+      setCaptivateVariable('scenariosCompleted', newScenariosCompleted); // Number
+      
+      // Update local cache for next calculation
+      CURRENT_SCORES = {
+        totalScore: newTotalScore,
+        redWinePossible: newRedPossible,
+        redWineActual: newRedActual,
+        whiteWinePossible: newWhitePossible,
+        whiteWineActual: newWhiteActual,
+        scenariosCompleted: newScenariosCompleted
+      };
+      
+      // Set scenario-specific variables for Captivate compatibility
+      setCaptivateVariable('currentScore', points);                     // Number
+      setCaptivateVariable('lastFeedback', feedback);                   // String
+      setCaptivateVariable('lastSelection', wineSelected);              // String
+      setCaptivateVariable('currentWineType', wineType);               // String
+      
+      console.log('All results sent to Captivate. Updated scores:', CURRENT_SCORES);
+    }
+
+    // Show error message
+    function showError(message) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('guest-scene').style.display = 'none';
+      
+      var errorDiv = document.createElement('div');
+      errorDiv.className = 'error';
+      errorDiv.innerHTML = '<h3>Loading Error</h3><p>' + message + '</p><p>Check console for details.</p>';
+      document.querySelector('.container').appendChild(errorDiv);
+    }
+
+    // Wait for scores before proceeding
+    function waitForScores(callback, timeout) {
+      var startTime = Date.now();
+      var maxWait = timeout || 3000; // 3 second timeout
+      
+      function checkScores() {
+        if (scoresReceived || (Date.now() - startTime) > maxWait) {
+          console.log('Scores received:', scoresReceived, 'Current scores:', CURRENT_SCORES);
+          callback();
+        } else {
+          setTimeout(checkScores, 100); // Check every 100ms
+        }
+      }
+      
+      checkScores();
+    }
+
+    // Main initialization function
+    function init() {
+      try {
+        console.log('Initializing wine training with API integration and score tracking');
+        parseURLParams(); // Get character/room from URL if provided
+        
+        // Show loading state
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('guest-scene').style.display = 'none';
+        
+        // STEP 1: Request current scores from Captivate
+        requestCurrentScores();
+        
+        // STEP 2: Wait for scores, then load scenario
+        waitForScores(function() {
+          // Load data from API
+          loadScenarioData(function(error, data) {
+            if (error) {
+              console.error('Failed to load scenario data:', error);
+              showError('Failed to load scenario data: ' + error.message);
+              return;
+            }
+            
+            // Store data globally for later use
+            currentScenarioData = data;
+            
+            console.log('Scenario data loaded successfully:', data);
+            
+            // Hide loading, show scene
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('guest-scene').style.display = 'block';
+            
+            // Set character image
+            var imgPath = 'img/' + data.character.image.split('/').pop();
+            document.querySelector('.guest-img').src = imgPath;
+            console.log('Set character image:', imgPath);
+            
+            // Type out scenario text
+            var bubble = document.getElementById('bubble-text');
+            typeText(bubble, data.scenario.scenario, function() {
+              // After typing completes, setup and show question block
+              console.log('Text typing complete, setting up wine selection');
+              setupWineSelection(data.scenario);
+              
+              var questionBlock = document.querySelector('.question-block');
+              if (questionBlock) {
+                questionBlock.classList.add('fade-in');
+                console.log('Question block should now be visible');
+              }
+            });
+            
+            // Set Captivate variables (matching your structure)
+            setCaptivateVariable('characterName', data.character.name);
+            setCaptivateVariable('characterVoice', data.character.voice);
+            setCaptivateVariable('characterImage', data.character.image);
+            setCaptivateVariable('scenarioText', data.scenario.scenario);
+            setCaptivateVariable('scenarioId', data.scenario.id);
+            setCaptivateVariable('scenarioLoaded', 'true');
+            
+            // Store scenario data as JSON string (for your Captivate button logic)
+            setCaptivateVariable('currentScenarioData', JSON.stringify(data.scenario));
+            
+            // Set individual wine options (matching your structure)
+            setCaptivateVariable('option1Wine', data.scenario.option1Wine.wine);
+            setCaptivateVariable('option2Wine', data.scenario.option2Wine.wine);
+            setCaptivateVariable('option3Wine', data.scenario.option3Wine.wine);
+          });
+        });
+        
+      } catch (error) {
+        console.error('Initialization error:', error);
+        showError('Initialization failed: ' + error.message);
+      }
+    }
+
+    // Start when page loads (old-school)
+    if (document.addEventListener) {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      window.onload = init;
+    }
+  </script>
+</body>
+</html>
