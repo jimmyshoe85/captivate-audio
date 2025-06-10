@@ -296,6 +296,20 @@
       }
     }
 
+    // Get Captivate variables (to read current scores)
+    function getCaptivateVariable(variableName) {
+      try {
+        if (window.parent && window.parent.cpAPIInterface) {
+          return window.parent.cpAPIInterface.getVariableValue(variableName);
+        } else {
+          return '0'; // Default fallback
+        }
+      } catch (error) {
+        console.log('Could not get Captivate variable: ' + variableName);
+        return '0'; // Default fallback
+      }
+    }
+
     // Type text animation (old-school)
     function typeText(element, text, callback) {
       element.textContent = '';
@@ -392,7 +406,7 @@
       console.log('Wine selection setup complete');
     }
 
-    // Handle answer submission
+    // Handle answer submission (updated to match Captivate structure)
     function handleSubmit() {
       var selectedOption = document.querySelector('.option-btn.selected');
       var feedbackElement = document.getElementById('feedback');
@@ -417,6 +431,7 @@
       var isCorrect = selectedOption.getAttribute('data-is-correct') === 'true';
       var feedback = selectedOption.getAttribute('data-feedback');
       var points = parseInt(selectedOption.getAttribute('data-points')) || 0;
+      var wineSelected = selectedOption.textContent;
       
       // Display feedback immediately
       feedbackElement.classList.remove('feedback-correct', 'feedback-incorrect', 'feedback-warning');
@@ -438,18 +453,41 @@
         }
       }
       
-      // Send data to Captivate
+      // Set variables to match your Captivate button structure
       setCaptivateVariable('feedbackText', feedback);
+      
+      // Get current wine type performance tracking
+      var wineType = scenarioData.scenario.correctWineType;
+      var maxPoints = scenarioData.scenario.maxPoints;
+      
+      // Update wine type performance tracking (matching your Captivate logic)
+      if (wineType === 'red') {
+        var redPossible = parseInt(getCaptivateVariable('redWinePossible') || '0');
+        var redActual = parseInt(getCaptivateVariable('redWineActual') || '0');
+        setCaptivateVariable('redWinePossible', redPossible + maxPoints);
+        setCaptivateVariable('redWineActual', redActual + points);
+      } else if (wineType === 'white') {
+        var whitePossible = parseInt(getCaptivateVariable('whiteWinePossible') || '0');
+        var whiteActual = parseInt(getCaptivateVariable('whiteWineActual') || '0');
+        setCaptivateVariable('whiteWinePossible', whitePossible + maxPoints);
+        setCaptivateVariable('whiteWineActual', whiteActual + points);
+      }
+      
+      // Update total score
+      var currentTotal = parseInt(getCaptivateVariable('totalScore') || '0');
+      setCaptivateVariable('totalScore', currentTotal + points);
+      
+      // Set additional variables your Captivate might expect
       setCaptivateVariable('userScore', points);
-      setCaptivateVariable('isCorrect', isCorrect ? 1 : 0);
-      setCaptivateVariable('wineSelected', selectedOption.textContent);
+      setCaptivateVariable('wineSelected', wineSelected);
       setCaptivateVariable('selectionComplete', 'true');
       
-      console.log('Wine selection complete:', {
-        points: points,
-        feedback: feedback,
-        isCorrect: isCorrect,
-        wine: selectedOption.textContent
+      console.log('Wine selection complete - Captivate variables updated:', {
+        feedbackText: feedback,
+        userScore: points,
+        wineSelected: wineSelected,
+        wineType: wineType,
+        totalScore: currentTotal + points
       });
     }
 
@@ -480,11 +518,19 @@
           }
         });
         
-        // Set Captivate variables
+        // Set Captivate variables (matching your structure)
         setCaptivateVariable('characterName', scenarioData.character.name);
         setCaptivateVariable('scenarioText', scenarioData.scenario.scenario);
         setCaptivateVariable('scenarioId', scenarioData.scenario.id);
         setCaptivateVariable('scenarioLoaded', 'true');
+        
+        // Store scenario data as JSON string (matching your Captivate button logic)
+        setCaptivateVariable('currentScenarioData', JSON.stringify(scenarioData.scenario));
+        
+        // Set individual wine options (matching your structure)
+        setCaptivateVariable('option1Wine', scenarioData.scenario.option1Wine.wine);
+        setCaptivateVariable('option2Wine', scenarioData.scenario.option2Wine.wine);
+        setCaptivateVariable('option3Wine', scenarioData.scenario.option3Wine.wine);
         
       } catch (error) {
         console.error('Initialization error:', error);
