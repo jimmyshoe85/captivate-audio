@@ -282,32 +282,25 @@
       }
     };
 
-    // Set Captivate variables (old-school try/catch)
+    // MODIFIED: Set Captivate variables using postMessage (cross-origin safe)
     function setCaptivateVariable(variableName, value) {
-      try {
-        if (window.parent && window.parent.cpAPIInterface) {
-          window.parent.cpAPIInterface.setVariableValue(variableName, value);
-          console.log('Set Captivate variable ' + variableName + ' to: ' + value);
-        } else {
-          console.log('Would set Captivate variable ' + variableName + ' to: ' + value);
-        }
-      } catch (error) {
-        console.log('Could not set Captivate variable due to security restrictions. Variable: ' + variableName + ', Value: ' + value);
+      if (window.parent) {
+        // Send message to parent Captivate frame
+        window.parent.postMessage({
+          type: 'setCaptivateVariable',
+          variable: variableName,
+          value: value
+        }, '*'); // Use '*' for compatibility, or specify your LMS domain for security
+        console.log('Attempted to postMessage for Captivate variable ' + variableName + ' with value: ' + value);
+      } else {
+        console.log('No parent window found to postMessage to.');
       }
     }
 
-    // Get Captivate variables (to read current scores)
+    // getCaptivateVariable will return default values due to cross-origin restrictions
     function getCaptivateVariable(variableName) {
-      try {
-        if (window.parent && window.parent.cpAPIInterface) {
-          return window.parent.cpAPIInterface.getVariableValue(variableName);
-        } else {
-          return '0'; // Default fallback
-        }
-      } catch (error) {
-        console.log('Could not get Captivate variable: ' + variableName);
-        return '0'; // Default fallback
-      }
+      console.log('Cannot get Captivate variable due to cross-origin restrictions. Returning default: ' + variableName);
+      return '0'; // Default fallback - SOP prevents direct access
     }
 
     // Type text animation (old-school)
