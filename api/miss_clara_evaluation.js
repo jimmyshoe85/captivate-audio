@@ -1,5 +1,5 @@
 // /api/miss_clara_evaluation.js
-// Optimized for speed - reduced tokens and faster model
+// Fixed to use gpt-4o-mini which supports JSON mode
 
 import { OpenAI } from "openai";
 
@@ -31,9 +31,9 @@ export default async function handler(req, res) {
       apiKey: process.env.OPENAI_API_KEY,
     });
     
-    console.log('Calling OpenAI API - optimized for speed...');
+    console.log('Calling OpenAI API with gpt-4o-mini...');
     
-    // OPTIMIZED PROMPT - Much shorter, focused on speed
+    // Optimized prompt - brief but effective
     const prompt = `You are Miss Clara, a dramatic wine evaluator. Be theatrical but brief.
 
 ${sessionHistory}
@@ -55,13 +55,13 @@ JSON format (keep responses SHORT):
   "ttsText": "1 sentence perfect for audio"
 }`;
 
-    // OPTIMIZED API call - faster settings
+    // API call with gpt-4o-mini (supports JSON mode)
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // FASTER than gpt-4o-mini
+      model: "gpt-4o-mini", // SUPPORTS JSON MODE
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
-      max_tokens: 400, // REDUCED from 1200 
-      response_format: { type: "json_object" }
+      max_tokens: 400, // Still optimized for speed
+      response_format: { type: "json_object" } // This REQUIRES gpt-4 models
     });
 
     console.log('OpenAI API call completed successfully');
@@ -78,7 +78,7 @@ JSON format (keep responses SHORT):
       throw new Error('Failed to parse evaluation response');
     }
     
-    // FAST validation and cleanup
+    // Validation and cleanup
     const fixedEvaluation = {
       isRemedial: Boolean(evaluation.isRemedial),
       overallAssessment: evaluation.overallAssessment || "Performance requires improvement.",
@@ -106,7 +106,7 @@ JSON format (keep responses SHORT):
   } catch (error) {
     console.error('Error generating Miss Clara evaluation:', error);
     
-    // FAST fallback - no complex logic
+    // Fallback evaluation
     const fallbackEvaluation = {
       isRemedial: true,
       overallAssessment: "Technical difficulties prevent full assessment.",
