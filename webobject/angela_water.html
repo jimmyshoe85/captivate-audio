@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wine Training Web Object - API Version</title>
+  <title>Wine Training Web Object - Simplified Scoring</title>
   <style>
     html, body {
       margin: 0;
@@ -262,12 +262,12 @@
   <script>
     // Configuration - gets values from URL parameters or defaults
     var config = {
-      character: 'brittany',
+      character: 'angela',
       room: 'water',
       isRemedial: false
     };
 
-    // Global variable to store scenario data
+    // Global variables
     var currentScenarioData = null;
 
     // Parse URL parameters to override config
@@ -280,24 +280,42 @@
       console.log('Configuration:', config);
     }
 
-    // Set Captivate variables using postMessage (cross-origin safe)
+    // SIMPLIFIED: Set Captivate variables with proper data types (no complex request-response)
     function setCaptivateVariable(variableName, value) {
+      // Ensure proper data types
+      var processedValue = value;
+      
+      if (variableName === 'selectionComplete') {
+        processedValue = (value === true || value === 1 || value === '1') ? 1 : 0;
+      } else if (variableName.includes('Score') || 
+                 variableName.includes('Possible') || 
+                 variableName.includes('Actual') ||
+                 variableName.includes('Completed')) {
+        processedValue = parseInt(value) || 0;
+      }
+      
       if (window.parent) {
         window.parent.postMessage({
           type: 'setCaptivateVariable',
           variable: variableName,
-          value: value
+          value: processedValue
         }, '*');
-        console.log('Sent to Captivate: ' + variableName + ' = ' + value);
+        console.log('Sent to Captivate: ' + variableName + ' = ' + processedValue);
       } else {
-        console.log('No parent window - would set: ' + variableName + ' = ' + value);
+        console.log('No parent window - would set: ' + variableName + ' = ' + processedValue);
       }
     }
 
-    // Get Captivate variables (returns default due to cross-origin restrictions)
-    function getCaptivateVariable(variableName) {
-      console.log('Cannot get Captivate variable due to cross-origin restrictions: ' + variableName);
-      return '0'; // Default fallback
+    // SIMPLIFIED: Add values directly to Captivate variables (no reading required)
+    function addToCaptivateVariable(variableName, increment) {
+      if (window.parent) {
+        window.parent.postMessage({
+          type: 'addToCaptivateVariable',
+          variable: variableName,
+          increment: parseInt(increment) || 0
+        }, '*');
+        console.log('Added to Captivate: ' + variableName + ' += ' + increment);
+      }
     }
 
     // Load scenario data from API using XMLHttpRequest (old-school for Captivate compatibility)
@@ -474,7 +492,7 @@
       console.log('Wine selection setup complete - options should be visible');
     }
 
-    // Handle answer submission
+    // SIMPLIFIED: Handle answer submission with additive scoring only
     function handleSubmit() {
       var selectedOption = document.querySelector('.option-btn.selected');
       var feedbackElement = document.getElementById('feedback');
@@ -521,42 +539,45 @@
         }
       }
       
-      // Set variables to match your Captivate button structure
-      setCaptivateVariable('feedbackText', feedback);
-      
-      // Get current wine type performance tracking
+      // Get scenario details
       var wineType = currentScenarioData.scenario.correctWineType;
       var maxPoints = currentScenarioData.scenario.maxPoints;
       
-      // Update wine type performance tracking (using defaults due to cross-origin restrictions)
+      console.log('=== SIMPLIFIED SCORING ===');
+      console.log('Points to add:', points);
+      console.log('Max points for wine type:', maxPoints);
+      console.log('Wine type:', wineType);
+      
+      // SIMPLIFIED: Just add the increments to Captivate variables
+      // Set current selection info
+      setCaptivateVariable('feedbackText', feedback);
+      setCaptivateVariable('userScore', points);
+      setCaptivateVariable('isCorrect', isCorrect ? 1 : 0);
+      setCaptivateVariable('wineSelected', wineSelected);
+      setCaptivateVariable('selectionComplete', 1);
+      
+      // ADD to accumulative scores (Captivate handles the math)
+      addToCaptivateVariable('totalScore', points);
+      addToCaptivateVariable('scenariosCompleted', 1);
+      
+      // ADD to wine type specific scores
       if (wineType === 'red') {
-        var redPossible = parseInt(getCaptivateVariable('redWinePossible') || '0');
-        var redActual = parseInt(getCaptivateVariable('redWineActual') || '0');
-        setCaptivateVariable('redWinePossible', redPossible + maxPoints);
-        setCaptivateVariable('redWineActual', redActual + points);
+        addToCaptivateVariable('redWinePossible', maxPoints);
+        addToCaptivateVariable('redWineActual', points);
+        console.log('Added to RED scores: +' + points + ' actual, +' + maxPoints + ' possible');
       } else if (wineType === 'white') {
-        var whitePossible = parseInt(getCaptivateVariable('whiteWinePossible') || '0');
-        var whiteActual = parseInt(getCaptivateVariable('whiteWineActual') || '0');
-        setCaptivateVariable('whiteWinePossible', whitePossible + maxPoints);
-        setCaptivateVariable('whiteWineActual', whiteActual + points);
+        addToCaptivateVariable('whiteWinePossible', maxPoints);
+        addToCaptivateVariable('whiteWineActual', points);
+        console.log('Added to WHITE scores: +' + points + ' actual, +' + maxPoints + ' possible');
       }
       
-      // Update total score
-      var currentTotal = parseInt(getCaptivateVariable('totalScore') || '0');
-      setCaptivateVariable('totalScore', currentTotal + points);
+      // Set scenario-specific variables for Captivate compatibility
+      setCaptivateVariable('currentScore', points);
+      setCaptivateVariable('lastFeedback', feedback);
+      setCaptivateVariable('lastSelection', wineSelected);
+      setCaptivateVariable('currentWineType', wineType);
       
-      // Set additional variables your Captivate might expect
-      setCaptivateVariable('userScore', points);
-      setCaptivateVariable('wineSelected', wineSelected);
-      setCaptivateVariable('selectionComplete', 'true');
-      
-      console.log('Wine selection complete - All variables sent to Captivate:', {
-        feedbackText: feedback,
-        userScore: points,
-        wineSelected: wineSelected,
-        wineType: wineType,
-        totalScore: currentTotal + points
-      });
+      console.log('All increments sent to Captivate - no complex state management needed!');
     }
 
     // Show error message
@@ -573,14 +594,14 @@
     // Main initialization function
     function init() {
       try {
-        console.log('Initializing wine training with API integration');
+        console.log('Initializing wine training with SIMPLIFIED scoring');
         parseURLParams(); // Get character/room from URL if provided
         
         // Show loading state
         document.getElementById('loading').style.display = 'block';
         document.getElementById('guest-scene').style.display = 'none';
         
-        // Load data from API
+        // Load data from API (no score requests needed!)
         loadScenarioData(function(error, data) {
           if (error) {
             console.error('Failed to load scenario data:', error);
