@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blend It: Wine Profile Game</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background: linear-gradient(135deg, #2F4858 0%, #006D77 100%);
+      color: #212121;
+      padding: 2rem;
+      max-width: 700px;
+      margin: auto;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #FFFFFF;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #f5f5f5;
+      font-style: italic;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+    
+    .wine-info {
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      border-left: 5px solid #F4A261;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      color: #212121;
+    }
+    
+    .slider-box {
+      background: #f9f9f9;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 10px;
+      border-left: 5px solid #E76F51;
+    }
+    
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #2F4858;
+      font-size: 1.1rem;
+    }
+    
+    input[type=range] {
+      width: 100%;
+      height: 8px;
+      background: #ccc;
+      border-radius: 5px;
+      outline: none;
+      margin: 0.5rem 0;
+    }
+    
+    input[type=range]::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #E76F51;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    
+    .slider-value {
+      text-align: center;
+      font-weight: bold;
+      color: #264653;
+      margin-top: 0.5rem;
+    }
+    
+    #result {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 2rem;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      min-height: 3rem;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      color: #212121;
+    }
+    
+    .result-excellent {
+      border-left: 5px solid #2a9d8f;
+      color: #2a9d8f;
+    }
+    
+    .result-good {
+      border-left: 5px solid #e9c46a;
+      color: #e9c46a;
+    }
+    
+    .result-poor {
+      border-left: 5px solid #e63946;
+      color: #e63946;
+    }
+    
+    button {
+      display: block;
+      margin: 2rem auto;
+      padding: 1rem 2rem;
+      background: #F4A261;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    
+    button:hover {
+      background: #E76F51;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    }
+    
+    .score-display {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    
+    .target-hint {
+      background: #f5f5f5;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-style: italic;
+      text-align: center;
+      color: #212121;
+      border: 1px dashed #2F4858;
+    }
+  </style>
+</head>
+<body>
+  <h1>🍷 Blend It</h1>
+  <p class="subtitle">Profile Challenge: Match Miranda's Mystery Wine</p>
+  
+  <div class="wine-info" id="scenario-info">
+    <p><strong>Challenge:</strong> A discerning guest has ordered "something bold but balanced" to pair with their ribeye steak. Match the wine's structural profile using the sliders below.</p>
+    <div class="target-hint">
+      <em>"I need something with presence, but not overwhelming acidity. The tannins should have grip, and the body must stand up to the meat." — The Guest</em>
+    </div>
+  </div>
+
+  <div class="slider-box">
+    <label for="body">Body (Light → Full)</label>
+    <input type="range" id="body" min="1" max="10" value="5" oninput="updateSliderValue('body')">
+    <div class="slider-value" id="body-value">5</div>
+  </div>
+
+  <div class="slider-box">
+    <label for="acid">Acidity (Low → High)</label>
+    <input type="range" id="acid" min="1" max="10" value="5" oninput="updateSliderValue('acid')">
+    <div class="slider-value" id="acid-value">5</div>
+  </div>
+
+  <div class="slider-box">
+    <label for="tannin">Tannin (Soft → Firm)</label>
+    <input type="range" id="tannin" min="1" max="10" value="5" oninput="updateSliderValue('tannin')">
+    <div class="slider-value" id="tannin-value">5</div>
+  </div>
+
+  <button onclick="checkMatch()">Submit Your Blend</button>
+  <button onclick="newScenario()" style="background: #006D77; margin-top: 1rem; color: #ffffff;">New Challenge</button>
+
+  <div id="result"></div>
+
+  <script>
+    // Multiple wine pairing scenarios
+    const scenarios = [
+      {
+        dish: "Ribeye Steak",
+        description: "A discerning guest has ordered \"something bold but balanced\" to pair with their ribeye steak.",
+        guestQuote: "I need something with presence, but not overwhelming acidity. The tannins should have grip, and the body must stand up to the meat.",
+        target: { body: 8, acid: 4, tannin: 7 },
+        explanation: "ribeye steak needs full body, moderate acidity, and firm tannins to cut through the fat"
+      },
+      {
+        dish: "Grilled Salmon",
+        description: "A health-conscious diner wants a wine to complement their herb-crusted salmon with lemon.",
+        guestQuote: "I'd like something fresh and clean that won't overpower the fish, but has enough character to stand up to the herbs.",
+        target: { body: 4, acid: 8, tannin: 2 },
+        explanation: "delicate fish needs light body, bright acidity to complement lemon, and minimal tannins"
+      },
+      {
+        dish: "Mushroom Risotto",
+        description: "A vegetarian guest seeks the perfect wine for their truffle mushroom risotto.",
+        guestQuote: "Something earthy that matches the mushrooms, with enough richness for the creamy risotto, but not too heavy.",
+        target: { body: 6, acid: 5, tannin: 4 },
+        explanation: "earthy mushrooms need medium body, balanced acidity, and soft tannins to complement without competing"
+      }
+    ];
+    
+    let currentScenario = 0;
+    let hasSubmitted = false;
+    
+    // Initialize game
+    function initGame() {
+      loadScenario();
+      resetSliders();
+      clearResult();
+    }
+    
+    // Load current scenario
+    function loadScenario() {
+      const scenario = scenarios[currentScenario];
+      document.getElementById('scenario-info').innerHTML = `
+        <p><strong>Challenge ${currentScenario + 1}:</strong> ${scenario.description}</p>
+        <div class="target-hint">
+          <em>"${scenario.guestQuote}" — The Guest</em>
+        </div>
+      `;
+      hasSubmitted = false;
+    }
+    
+    // Reset sliders to middle position
+    function resetSliders() {
+      document.getElementById('body').value = 5;
+      document.getElementById('acid').value = 5;
+      document.getElementById('tannin').value = 5;
+      updateSliderValue('body');
+      updateSliderValue('acid');
+      updateSliderValue('tannin');
+    }
+    
+    // Clear result area
+    function clearResult() {
+      const resultBox = document.getElementById('result');
+      resultBox.innerHTML = '';
+      resultBox.className = '';
+    }
+    
+    // New scenario function
+    function newScenario() {
+      currentScenario = (currentScenario + 1) % scenarios.length;
+      initGame();
+    }
+    
+    // Update slider value displays
+    function updateSliderValue(slider) {
+      const value = document.getElementById(slider).value;
+      document.getElementById(slider + '-value').textContent = value;
+    }
+    
+    // Initialize slider displays
+    updateSliderValue('body');
+    updateSliderValue('acid');
+    updateSliderValue('tannin');
+
+    function checkMatch() {
+      if (hasSubmitted) return; // Prevent multiple submissions
+      
+      const scenario = scenarios[currentScenario];
+      const target = scenario.target;
+      
+      const body = +document.getElementById('body').value;
+      const acid = +document.getElementById('acid').value;
+      const tannin = +document.getElementById('tannin').value;
+
+      // Calculate how close they are
+      const totalDifference = Math.abs(body - target.body) + Math.abs(acid - target.acid) + Math.abs(tannin - target.tannin);
+      const score = Math.max(0, 10 - totalDifference);
+      
+      const resultBox = document.getElementById('result');
+      
+      // Remove previous result classes
+      resultBox.className = '';
+      
+      let message = '';
+      let scoreText = `<div class="score-display">Score: ${score}/10 | Challenge ${currentScenario + 1}/3</div>`;
+      
+      if (score >= 9) {
+        resultBox.classList.add('result-excellent');
+        message = "✨ <strong>Perfection!</strong> Miranda raises an eyebrow in genuine surprise. \"Finally, someone who understands wine structure. This pairing is... acceptable.\"";
+      } else if (score >= 7) {
+        resultBox.classList.add('result-excellent');
+        message = "🎯 <strong>Excellent!</strong> The guest nods approvingly. \"This has exactly what I was looking for - perfect balance for this dish.\"";
+      } else if (score >= 5) {
+        resultBox.classList.add('result-good');
+        message = "🧐 <strong>Close, but...</strong> Miranda's expression suggests room for improvement. \"Competent, but you're missing the mark. Consider the dish more carefully.\"";
+      } else if (score >= 3) {
+        resultBox.classList.add('result-poor');
+        message = "😬 <strong>Off the mark.</strong> \"Are you trying to create a wine disaster? This pairing is... unfortunate.\"";
+      } else {
+        resultBox.classList.add('result-poor');
+        message = "💀 <strong>Disaster!</strong> Miranda's withering stare could freeze champagne. \"I've seen people with concussions make better wine decisions. Try the next challenge.\"";
+      }
+      
+      resultBox.innerHTML = message + scoreText;
+      hasSubmitted = true;
+      
+      // Show target for learning
+      if (score < 7) {
+        setTimeout(() => {
+          resultBox.innerHTML += `<div class="target-hint" style="margin-top: 1rem;"><strong>Hint:</strong> For ${scenario.dish.toLowerCase()}, ${scenario.explanation}. Target: Body ${target.body}, Acidity ${target.acid}, Tannins ${target.tannin}</div>`;
+        }, 2000);
+      }
+    }
+    
+    // Initialize the game
+    initGame();
+  </script>
+</body>
+</html>
