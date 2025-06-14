@@ -8,6 +8,7 @@
     { "src": "/api/miss_clara_evaluation", "dest": "/api/miss_clara_evaluation.js" },
     { "src": "/brittany_water", "dest": "/webobject/brittany_water.html" },
     { "src": "/webobject/(.*)", "dest": "/webobject/$1" },
-    { "src": "/checks/(.*)", "dest": "/checks/$1" }
+    { "src": "/checks/(.*)", "dest": "/checks/$1" },
+    { "src": "/api/(.*)", "dest": "/api/$1" }
   ]
 }
