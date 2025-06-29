@@ -1,16 +1,26 @@
 {
-    "name": "captivate-tts-api",
-    "version": "1.0.0",
-    "description": "TTS API for Captivate",
-    "main": "index.js",
-    "scripts": {
-      "start": "vercel dev",
-      "deploy": "vercel deploy --prod"
-    },
-    "dependencies": {
-      "openai": "^4.20.1"
-    },
-    "engines": {
-      "node": ">=14.0.0"
-    }
-  }
+  "name": "captivate-audio",
+  "version": "1.0.0",
+  "description": "TTS API and Juice Room Mentor for Captivate",
+  "type": "module",
+  "main": "juiceRoomAgent2.js",
+  "scripts": {
+    "start": "node juiceRoomAgent2.js",
+    "dev": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "openai": "^4.104.0",
+    "readline": "^1.3.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
