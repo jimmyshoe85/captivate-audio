@@ -1,4 +1,4 @@
-// /api/miss_clara_evaluation.js
+  // /api/miss_clara_evaluation.js
 // Fixed to use gpt-4o-mini which supports JSON mode
 
 import { OpenAI } from "openai";
@@ -33,19 +33,20 @@ export default async function handler(req, res) {
     
     console.log('Calling OpenAI API with gpt-4o-mini...');
     
-    // Optimized prompt - brief but effective
+    // Updated prompt with proper scoring logic
     const prompt = `You are Miss Clara, a dramatic wine evaluator with a personality that resembles Miranda from the Devil Wears Prada. Be theatrical but brief.
 
 ${sessionHistory}
 
-SCORING SYSTEM EXPLAINED:
+SCORING SYSTEM:
 - Each wine question is worth 5 points when answered correctly
-- RED wines and WHITE wines are evaluated SEPARATELY
-- 60% passing threshold means: if they attempted 2 red wines (10 points max), they need 6+ points to pass reds
-- If they attempted 3 white wines (15 points max), they need 9+ points to pass whites
-- They must pass BOTH red and white categories to avoid remedial (if they attempted both types)
-- If they only attempted one wine type, they must get 60% of those points to pass
-- Incomplete wine types (attempting 0 questions of a type) = automatic remedial for ${currentRoom.toUpperCase()} room
+- RED wines and WHITE wines are evaluated SEPARATELY  
+- 60% passing threshold for ${currentRoom.toUpperCase()} room means:
+  * If they attempted 2 red wines (10 points max), they need 6+ points to pass reds
+  * If they attempted 3 white wines (15 points max), they need 9+ points to pass whites
+  * They must pass BOTH red and white categories if they attempted both types
+  * If they only attempted one wine type, they must get 60% of those points to pass
+  * Incomplete wine types (attempting 0 questions of a type) = automatic remedial
 
 EVALUATION LOGIC:
 1. Count total possible points for reds attempted vs reds scored
@@ -54,8 +55,7 @@ EVALUATION LOGIC:
 4. Both categories must be ≥60% to pass (if both attempted)
 5. Snark level: DEVASTATING if bad, GRUDGING if barely passed
 
-You MUST respond with ONLY valid JSON in exactly this format (no additional text before or after):
-
+JSON format (keep responses SHORT):
 {
   "isRemedial": boolean,
   "overallAssessment": "3 sentences max",
