@@ -1,4 +1,4 @@
-  // /api/miss_clara_evaluation.js
+// /api/miss_clara_evaluation.js
 // Fixed to use gpt-4o-mini which supports JSON mode
 
 import { OpenAI } from "openai";
@@ -48,12 +48,9 @@ SCORING SYSTEM:
   * If they only attempted one wine type, they must get 60% of those points to pass
   * Incomplete wine types (attempting 0 questions of a type) = automatic remedial
 
-EVALUATION LOGIC:
-1. Count total possible points for reds attempted vs reds scored
-2. Count total possible points for whites attempted vs whites scored  
-3. Calculate percentage for each category they attempted
-4. Both categories must be ≥60% to pass (if both attempted)
-5. Snark level: DEVASTATING if bad, GRUDGING if barely passed
+REQUIREMENTS (return JSON only):
+- Calculate red wine percentage and white wine percentage separately
+- Snark level: DEVASTATING if bad, GRUDGING if passed
 
 JSON format (keep responses SHORT):
 {
@@ -69,7 +66,7 @@ JSON format (keep responses SHORT):
 
     // API call with gpt-4o-mini (supports JSON mode)
     const completion = await openai.chat.completions.create({
-      model: "gpt-5", // SUPPORTS JSON MODE
+      model: "gpt-4o-mini", // SUPPORTS JSON MODE
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
       max_tokens: 400, // Still optimized for speed
