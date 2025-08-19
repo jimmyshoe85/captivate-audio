@@ -1,56 +1,97 @@
 // /api/miss_clara_evaluation.js
+// Fixed to use gpt-4o-mini which supports JSON mode
+
 import { OpenAI } from "openai";
 
 export default async function handler(req, res) {
+  // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
     const { sessionHistory, currentRoom = "water" } = req.body || {};
-    if (!sessionHistory) return res.status(400).json({ error: "Session history is required" });
+    
+    if (!sessionHistory) {
+      return res.status(400).json({ error: "Session history is required" });
+    }
+    
+    console.log('Miss Clara evaluation request for room:', currentRoom);
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    // Initialize OpenAI
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    
+    console.log('Calling OpenAI API with gpt-4o-mini...');
+    
+    // Optimized prompt - brief but effective
+    const prompt = `You are Miss Clara, a dramatic wine evaluator with a personality that resembles Miranda from the Devil Wears Prada. Be theatrical but brief.
 
-    const system = `
-You are Miss Clara, a dramatic wine evaluator with a Miranda Priestly edge.
-Be theatrical but concise. Output MUST be valid single JSON object only.
-Scoring:
-- Passing threshold: 60% for ${currentRoom.toUpperCase()} room
-- Missing required wine types => automatic remedial
-Tone:
-- Snark: "DEVASTATING" if fail, "GRUDGING" if pass
-JSON schema (keep short strings):
+${sessionHistory}
+
+SCORING SYSTEM EXPLAINED:
+- Each wine question is worth 5 points when answered correctly
+- RED wines and WHITE wines are evaluated SEPARATELY
+- 60% passing threshold means: if they attempted 2 red wines (10 points max), they need 6+ points to pass reds
+- If they attempted 3 white wines (15 points max), they need 9+ points to pass whites
+- They must pass BOTH red and white categories to avoid remedial (if they attempted both types)
+- If they only attempted one wine type, they must get 60% of those points to pass
+- Incomplete wine types (attempting 0 questions of a type) = automatic remedial for ${currentRoom.toUpperCase()} room
+
+EVALUATION LOGIC:
+1. Count total possible points for reds attempted vs reds scored
+2. Count total possible points for whites attempted vs whites scored  
+3. Calculate percentage for each category they attempted
+4. Both categories must be ≥60% to pass (if both attempted)
+5. Snark level: DEVASTATING if bad, GRUDGING if barely passed
+
+You MUST respond with ONLY valid JSON in exactly this format (no additional text before or after):
+
 {
   "isRemedial": boolean,
-  "overallAssessment": "max 3 sentences",
-  "strengths": "1 sentence",
+  "overallAssessment": "3 sentences max",
+  "strengths": "1 sentence", 
   "weaknesses": "1 sentence",
   "patternAnalysis": "1 sentence",
   "finalVerdict": "1 dramatic sentence",
   "nextSteps": "1 sentence",
-  "ttsText": "3 short sentences for audio"
-}`.trim();
+  "ttsText": "3 sentence perfect for audio"
+}`;
 
-    const user = `${sessionHistory}`;
-
+    // API call with gpt-4o-mini (supports JSON mode)
     const completion = await openai.chat.completions.create({
-      model: "gpt-5",                     // using GPT‑5
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user }
-      ],
+      model: "gpt-5", // SUPPORTS JSON MODE
+      messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
-      max_tokens: 400,
-      response_format: { type: "json_object" } // JSON mode supported
+      max_tokens: 400, // Still optimized for speed
+      response_format: { type: "json_object" } // This REQUIRES gpt-4 models
     });
 
-    const responseText = completion.choices[0].message.content || "{}";
-    let evaluation = JSON.parse(responseText);
+    console.log('OpenAI API call completed successfully');
 
-    const fixed = {
+    // Parse response
+    const responseText = completion.choices[0].message.content;
+    console.log('Raw response length:', responseText.length);
+    
+    let evaluation;
+    try {
+      evaluation = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('JSON parse error, using fallback');
+      throw new Error('Failed to parse evaluation response');
+    }
+    
+    // Validation and cleanup
+    const fixedEvaluation = {
       isRemedial: Boolean(evaluation.isRemedial),
       overallAssessment: evaluation.overallAssessment || "Performance requires improvement.",
       strengths: evaluation.strengths || "Minimal strengths observed.",
@@ -60,12 +101,25 @@ JSON schema (keep short strings):
       nextSteps: evaluation.nextSteps || "Continue training.",
       ttsText: evaluation.ttsText || evaluation.finalVerdict || "Try harder next time."
     };
+    
+    // Ensure TTS text is reasonable length
+    if (fixedEvaluation.ttsText.length > 150) {
+      fixedEvaluation.ttsText = fixedEvaluation.finalVerdict.substring(0, 147) + "...";
+    }
+    
+    console.log('Evaluation processed, sending response');
+    
+    // Return the evaluation
+    res.status(200).json({
+      success: true,
+      evaluation: fixedEvaluation
+    });
 
-    if (fixed.ttsText.length > 150) fixed.ttsText = fixed.finalVerdict.slice(0, 147) + "...";
-
-    return res.status(200).json({ success: true, evaluation: fixed });
   } catch (error) {
-    const fallback = {
+    console.error('Error generating Miss Clara evaluation:', error);
+    
+    // Fallback evaluation
+    const fallbackEvaluation = {
       isRemedial: true,
       overallAssessment: "Technical difficulties prevent full assessment.",
       strengths: "You selected options.",
@@ -75,6 +129,11 @@ JSON schema (keep short strings):
       nextSteps: "Try again when technology cooperates.",
       ttsText: "Technical difficulties cannot mask poor performance."
     };
-    return res.status(200).json({ success: true, evaluation: fallback, fallback: true });
+    
+    return res.status(200).json({ 
+      success: true,
+      evaluation: fallbackEvaluation,
+      fallback: true
+    });
   }
 }
